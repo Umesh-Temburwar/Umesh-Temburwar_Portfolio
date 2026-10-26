@@ -2,6 +2,7 @@ import type { CarouselItem } from "@/components/ui/3-d-coverflow-carousel";
 import { portfolioData } from "@/data/portfolio";
 
 const PROJECT_COVER_IMAGES: Record<string, string> = {
+  "universal-job-apply-bot": "/universal-job-apply-bot.png",
   edtech: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80",
   inventory: "https://images.unsplash.com/photo-1556745755-5d3b4e4597b4?w=800&q=80",
   bytefest: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",

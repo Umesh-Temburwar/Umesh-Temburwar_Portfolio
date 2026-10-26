@@ -11,6 +11,26 @@ export const profileLinks: { name: 'LinkedIn' | 'GitHub' | 'LeetCode' | 'HackerR
   { name: 'GeeksforGeeks', url: '' }, // TODO: add my real profile URL
 ];
 
+export interface ProjectItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  category?: string;
+  shortDescription: string;
+  description: string;
+  problem?: string;
+  solution?: string;
+  features?: string[];
+  architecture?: string;
+  challenges?: string;
+  tech: string[];
+  status: string;
+  githubUrl: string;
+  liveUrl: string;
+  screenshots: string[];
+  coverImage: string;
+}
+
 export const portfolioData = {
   header: {
     logo: "UMESH TEMBURWAR",
@@ -44,6 +64,34 @@ export const portfolioData = {
     content: "I am a Computer Science Engineering student with a solid foundation in building full-stack web applications. My development journey revolves around continuous learning in databases, modern web development, and emerging AI tools. I enjoy translating complex problems into clean, scalable code and am excited to bring my technical skills to professional software engineering roles."
   },
   projects: [
+    {
+      id: "universal-job-apply-bot",
+      title: "Universal Job Apply Bot",
+      subtitle: "Full-Stack Job Application Automation Platform",
+      category: "Full-Stack Development / Browser Automation",
+      shortDescription: "A full-stack job application automation platform designed to streamline job searching and application workflows using Python, browser automation, React, FastAPI, and Supabase.",
+      description: "Developed a full-stack platform for automating repetitive job application workflows using Python, Selenium, FastAPI, React, and Supabase. The system features a modern control dashboard, asynchronous task worker dispatch, stealth browser automation with anti-detection pacing, dynamic resume upload, and persistent SQLite tracking ensuring zero duplicate submissions.",
+      problem: "Job seekers spend hundreds of hours manually searching job portals, re-entering identical profile details, filling repetitive screening questionnaires, and tracking application statuses across disjointed portals without unified metrics.",
+      solution: "Engineered an end-to-end automation platform combining a React 19 + TypeScript SPA dashboard, an asynchronous Python FastAPI backend, stealth Selenium browser workers, and Supabase cloud state management. Handles automated keyword searches, form filling, cover notes, and non-blocking smartphone alert notifications.",
+      features: [
+        "Automated multi-platform application workflows across Naukri, LinkedIn, Indeed, and Internshala",
+        "Stealth browser automation engine with human-like delays, mouse trajectories, and anti-bot evasion",
+        "FastAPI asynchronous REST backend with background worker task queue and rate-limiting",
+        "Modern React 19 + TypeScript dashboard with live telemetry logs and application CRM table",
+        "AI-assisted screening answerer and ATS keyword match scoring against candidate profile",
+        "Persistent SQLite tracking database ensuring zero duplicate job applications",
+        "Cloud-ready deployment architecture on Vercel (Frontend) and Render (FastAPI Backend)"
+      ],
+      architecture: "React Frontend (Vite + Tailwind CSS) → FastAPI Async REST API (Python) → Background Automation Worker → Stealth Selenium WebDriver (Browser Automation) ↔ Supabase (Cloud Auth/DB) & SQLite (Local CRM)",
+      challenges: "Mitigating portal bot detection and dynamic DOM mutations across frequent UI updates; orchestrating non-blocking background workers with real-time log streaming; handling multi-step application modal forms with conditional screening questionnaires reliably.",
+      tech: ["Python", "Selenium", "FastAPI", "React", "Supabase", "REST API", "TypeScript", "Tailwind CSS", "SQLite"],
+      status: "Completed",
+      githubUrl: "https://github.com/Umesh-Temburwar/universal-job-apply-bot",
+      liveUrl: "https://universal-job-apply-bot.vercel.app",
+      screenshots: ["/universal-job-apply-bot.png"],
+      coverImage: "/universal-job-apply-bot.png",
+    },
+
     {
       id: "edtech",
       title: "EdTech Learning Platform",
@@ -107,9 +155,9 @@ export const portfolioData = {
     core: [
       { category: "Languages", items: ["C", "C++", "Python", "JavaScript", "TypeScript"] },
       { category: "Frontend", items: ["React.js", "HTML", "CSS", "Tailwind CSS"] },
-      { category: "Backend", items: ["Node.js", "Express.js", "REST APIs", "Authentication"] },
-      { category: "Databases", items: ["SQL", "PostgreSQL","MongoDB", "Supabase", "Firebase"] },
-      { category: "Tools", items: ["Git", "GitHub", "VS Code", "Postman","Linux","Docker"] },
+      { category: "Backend", items: ["FastAPI", "Python", "Node.js", "Express.js", "REST APIs", "Authentication"] },
+      { category: "Databases", items: ["Supabase", "PostgreSQL", "SQLite", "MongoDB", "Firebase", "SQL"] },
+      { category: "Tools", items: ["Selenium", "Git", "GitHub", "VS Code", "Postman", "Linux", "Docker"] },
       { category: "CS Fundamentals", items: ["Data Structures and Algorithms", "OOP", "DBMS", "Operating Systems", "Computer Networks"] }
     ],
     learning: [

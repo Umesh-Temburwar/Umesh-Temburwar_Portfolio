@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, use
 import { ArrowUp, ArrowRight, ExternalLink, X, Mail, Send, Phone } from 'lucide-react';
 
 import emailjs from '@emailjs/browser';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData, type ProjectItem } from '../data/portfolio';
 import { useResume } from '../hooks/useResume';
 import { Reveal } from '@/components/Reveal';
 import { SocialLinks } from '@/components/SocialLinks';
@@ -252,7 +252,7 @@ const HeroVisual = ({ isLoaded }: { isLoaded: boolean }) => {
 const App = () => {
   const shouldReduceMotion = useReducedMotion();
   const [isLoaded, setIsLoaded] = useState(true);
-  const [selectedProject, setSelectedProject] = useState<typeof portfolioData.projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | typeof portfolioData.projects[0] | null>(null);
   const resume = useResume();
 
   const sectionIds = ['hero', 'about', 'projects', 'skills', 'experience', 'education', 'certifications', 'contact'];

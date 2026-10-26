@@ -9,7 +9,7 @@ import NotFound from './pages/NotFound';
 
 const ResumeAdmin = React.lazy(() => import('./pages/admin/ResumeAdmin'));
 
-import { portfolioData } from './data/portfolio';
+import { portfolioData, type ProjectItem } from './data/portfolio';
 import { Reveal } from '@/components/Reveal';
 import { SocialLinks } from '@/components/SocialLinks';
 
@@ -264,7 +264,7 @@ const HeroVisual = ({ isLoaded }: { isLoaded: boolean }) => {
 const App = () => {
   const shouldReduceMotion = useReducedMotion();
   const [isLoaded, setIsLoaded] = useState(true);
-  const [selectedProject, setSelectedProject] = useState<typeof portfolioData.projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | typeof portfolioData.projects[0] | null>(null);
 
   const { scrollY } = useScroll();
 
@@ -760,29 +760,96 @@ const App = () => {
                   </button>
                 </div>
 
-                <div className="p-8 overflow-y-auto custom-scrollbar flex flex-col gap-12">
-                  <div className="text-lg text-textMuted leading-relaxed">
-                    {selectedProject.description}
+                <div className="p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8">
+                  <div>
+                    <div className="text-xs font-mono text-primary uppercase tracking-widest mb-3">Project Overview</div>
+                    <div className="text-lg text-textMuted leading-relaxed">
+                      {selectedProject.description || selectedProject.shortDescription}
+                    </div>
                   </div>
 
+                  {'problem' in selectedProject && selectedProject.problem && (
+                    <div className="bg-background/40 border border-border/80 p-5">
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-2">Problem Statement</div>
+                      <p className="text-textMuted text-sm leading-relaxed">{selectedProject.problem}</p>
+                    </div>
+                  )}
+
+                  {'solution' in selectedProject && selectedProject.solution && (
+                    <div className="bg-background/40 border border-border/80 p-5">
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-2">Engineered Solution</div>
+                      <p className="text-textMuted text-sm leading-relaxed">{selectedProject.solution}</p>
+                    </div>
+                  )}
+
+                  {'features' in selectedProject && selectedProject.features && selectedProject.features.length > 0 && (
+                    <div>
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-3">Key Features</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {selectedProject.features.map((feat: string, i: number) => (
+                          <div key={i} className="flex items-start gap-2 bg-background/60 border border-border p-3 text-xs text-textMuted">
+                            <span className="text-primary mt-0.5">✦</span>
+                            <span>{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {'architecture' in selectedProject && selectedProject.architecture && (
+                    <div>
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-3">System Architecture</div>
+                      <div className="bg-background/80 border border-border p-4 text-xs font-mono text-textMuted">
+                        <div className="flex flex-wrap items-center gap-2 text-primary font-semibold pb-2 border-b border-border/50 mb-2">
+                          <span>React Frontend</span>
+                          <span>→</span>
+                          <span>FastAPI Backend</span>
+                          <span>→</span>
+                          <span>Automation Worker</span>
+                          <span>→</span>
+                          <span>Stealth Selenium</span>
+                        </div>
+                        <p>{selectedProject.architecture}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {'challenges' in selectedProject && selectedProject.challenges && (
+                    <div>
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-3">Engineering Challenges</div>
+                      <p className="text-textMuted text-sm leading-relaxed bg-background/40 border border-border/80 p-5">
+                        {selectedProject.challenges}
+                      </p>
+                    </div>
+                  )}
+
+                  {'screenshots' in selectedProject && selectedProject.screenshots && selectedProject.screenshots.length > 0 && (
+                    <div>
+                      <div className="text-xs font-mono text-primary uppercase tracking-widest mb-3">Application Preview</div>
+                      <div className="border border-border overflow-hidden bg-background">
+                        <img src={selectedProject.screenshots[0]} alt={selectedProject.title} className="w-full h-auto object-cover" />
+                      </div>
+                    </div>
+                  )}
+
                   <div>
-                    <div className="font-mono text-sm uppercase text-textMain mb-6 tracking-widest border-b border-border pb-2">Technologies</div>
+                    <div className="font-mono text-xs uppercase text-primary mb-3 tracking-widest">Technologies</div>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.tech.map((t: string) => (
-                        <span key={t} className="px-3 py-1 bg-background border border-border font-mono text-xs">{t}</span>
+                        <span key={t} className="px-3 py-1 bg-background border border-border font-mono text-xs text-textMuted">{t}</span>
                       ))}
                     </div>
                   </div>
 
-                  <div className="flex gap-6 mt-4">
-                    {selectedProject.githubUrl && (
-                      <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-border hover:border-primary text-textMain font-mono text-sm uppercase tracking-widest transition-colors flex items-center gap-2">
-                        <Github size={16} /> Repository
-                      </a>
-                    )}
+                  <div className="flex flex-wrap gap-4 pt-4 border-t border-border/50">
                     {selectedProject.liveUrl && (
                       <a href={selectedProject.liveUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-textMain text-background hover:bg-primary font-mono text-sm uppercase tracking-widest transition-colors flex items-center gap-2">
                         <ExternalLink size={16} /> Live Demo
+                      </a>
+                    )}
+                    {selectedProject.githubUrl && (
+                      <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-border hover:border-primary text-textMain font-mono text-sm uppercase tracking-widest transition-colors flex items-center gap-2">
+                        <Github size={16} /> GitHub Repository
                       </a>
                     )}
                   </div>
