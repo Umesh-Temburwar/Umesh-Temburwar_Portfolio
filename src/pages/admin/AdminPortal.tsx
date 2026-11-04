@@ -22,14 +22,28 @@ import {
   Mail,
   Clock,
   Zap,
+  BookMarked,
+  DollarSign,
+  CheckCircle2,
+  HelpCircle,
+  MessageSquare,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { skillsNotesData } from '../../data/admin/skillsNotesData';
 import { projectsInterviewData } from '../../data/admin/projectsInterviewData';
 import { interviewRoundsData } from '../../data/admin/interviewQuestionsData';
 import { cheatSheetsData } from '../../data/admin/cheatSheetsData';
+import { handwrittenNotesData } from '../../data/admin/handwrittenNotesData';
+import { salaryAndHRPipelineData } from '../../data/admin/salaryAndHRPipelineData';
 
-type TabType = 'overview' | 'skills' | 'projects' | 'interview' | 'cheatsheets';
+type TabType =
+  | 'overview'
+  | 'skills'
+  | 'handwritten'
+  | 'projects'
+  | 'interview'
+  | 'salary-pipeline'
+  | 'cheatsheets';
 
 export default function AdminPortal() {
   // Auth state
@@ -47,6 +61,8 @@ export default function AdminPortal() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('edtech-platform');
   const [selectedRoundId, setSelectedRoundId] = useState<string>('round-1-fundamentals');
   const [selectedCheatSheet, setSelectedCheatSheet] = useState<string>('git-cheatsheet');
+  const [selectedHandwrittenId, setSelectedHandwrittenId] = useState<string>('hw-js-eventloop');
+  const [selectedSalaryStageId, setSelectedSalaryStageId] = useState<string>('stage-1-introduction');
 
   // Copy feedback state
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -162,6 +178,21 @@ export default function AdminPortal() {
     return cheatSheetsData.find((c) => c.id === selectedCheatSheet) || cheatSheetsData[0];
   }, [selectedCheatSheet]);
 
+  // Selected Handwritten Note
+  const activeHandwritten = useMemo(() => {
+    return (
+      handwrittenNotesData.find((h) => h.id === selectedHandwrittenId) || handwrittenNotesData[0]
+    );
+  }, [selectedHandwrittenId]);
+
+  // Selected Salary Pipeline Stage
+  const activeSalaryStage = useMemo(() => {
+    return (
+      salaryAndHRPipelineData.find((s) => s.id === selectedSalaryStageId) ||
+      salaryAndHRPipelineData[0]
+    );
+  }, [selectedSalaryStageId]);
+
   // ----------------------------------------------------
   // LOGIN SCREEN (If not authenticated)
   // ----------------------------------------------------
@@ -170,7 +201,7 @@ export default function AdminPortal() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6 text-textMain selection:bg-primary/20 selection:text-primary">
         <div className="w-full max-w-md bg-surface border border-border p-8 rounded-2xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-amber-400 to-primary" />
-          
+
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary mb-4 shadow-[0_0_20px_rgba(245,165,36,0.15)]">
               <Lock size={28} />
@@ -178,9 +209,7 @@ export default function AdminPortal() {
             <span className="font-mono text-xs uppercase tracking-widest text-primary mb-1">
               Hidden Master Portal
             </span>
-            <h1 className="text-2xl font-bold tracking-tight text-textMain">
-              Umesh Temburwar
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight text-textMain">Umesh Temburwar</h1>
             <p className="text-xs font-mono text-textMuted mt-1">
               Admin & Technical Interview Preparation Hub
             </p>
@@ -258,18 +287,24 @@ export default function AdminPortal() {
                 </span>
               </div>
               <span className="text-[11px] font-mono text-textMuted">
-                Full Stack Developer (React.js, Node.js)
+                Full Stack Developer (React.js, Node.js) • B.Tech CSE (6.06 CGPA)
               </span>
             </div>
           </div>
 
           {/* Quick Contact & Time */}
           <div className="hidden lg:flex items-center gap-4 text-xs font-mono text-textMuted border-x border-border/60 px-4">
-            <a href="tel:+918856087984" className="hover:text-primary transition-colors flex items-center gap-1.5">
+            <a
+              href="tel:+918856087984"
+              className="hover:text-primary transition-colors flex items-center gap-1.5"
+            >
               <Phone size={13} className="text-primary" /> +91 8856087984
             </a>
             <span className="text-border">•</span>
-            <a href="mailto:umeshtemburwar2002@gmail.com" className="hover:text-primary transition-colors flex items-center gap-1.5">
+            <a
+              href="mailto:umeshtemburwar2002@gmail.com"
+              className="hover:text-primary transition-colors flex items-center gap-1.5"
+            >
               <Mail size={13} className="text-primary" /> umeshtemburwar2002@gmail.com
             </a>
             <span className="text-border">•</span>
@@ -296,7 +331,7 @@ export default function AdminPortal() {
           </div>
         </div>
 
-        {/* PRIMARY NAVIGATION TABS */}
+        {/* PRIMARY NAVIGATION TABS (ALL 7 TABS) */}
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 flex overflow-x-auto custom-scrollbar border-t border-border/40">
           <button
             onClick={() => setActiveTab('overview')}
@@ -306,7 +341,7 @@ export default function AdminPortal() {
                 : 'border-transparent text-textMuted hover:text-textMain'
             }`}
           >
-            <User size={15} /> 1. Overview & Resume
+            <User size={14} /> 1. Overview & Resume
           </button>
           <button
             onClick={() => setActiveTab('skills')}
@@ -316,7 +351,17 @@ export default function AdminPortal() {
                 : 'border-transparent text-textMuted hover:text-textMain'
             }`}
           >
-            <BookOpen size={15} /> 2. Skills Mastery Notes (Basic to Adv)
+            <BookOpen size={14} /> 2. Skills Mastery Notes
+          </button>
+          <button
+            onClick={() => setActiveTab('handwritten')}
+            className={`py-3 px-4 font-mono text-xs uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'handwritten'
+                ? 'border-amber-400 text-amber-400 font-bold bg-amber-400/5'
+                : 'border-transparent text-textMuted hover:text-amber-400'
+            }`}
+          >
+            <BookMarked size={14} /> 3. Handwritten Notebook 📒
           </button>
           <button
             onClick={() => setActiveTab('projects')}
@@ -326,7 +371,7 @@ export default function AdminPortal() {
                 : 'border-transparent text-textMuted hover:text-textMain'
             }`}
           >
-            <Briefcase size={15} /> 3. Projects Interview Blueprint
+            <Briefcase size={14} /> 4. Projects Blueprint
           </button>
           <button
             onClick={() => setActiveTab('interview')}
@@ -336,7 +381,17 @@ export default function AdminPortal() {
                 : 'border-transparent text-textMuted hover:text-textMain'
             }`}
           >
-            <Award size={15} /> 4. Round-Wise Q&A (Rounds 1 - 5)
+            <Award size={14} /> 5. Round-Wise Q&A (R1 - R5)
+          </button>
+          <button
+            onClick={() => setActiveTab('salary-pipeline')}
+            className={`py-3 px-4 font-mono text-xs uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'salary-pipeline'
+                ? 'border-emerald-400 text-emerald-400 font-bold bg-emerald-400/5'
+                : 'border-transparent text-textMuted hover:text-emerald-400'
+            }`}
+          >
+            <DollarSign size={14} /> 6. Intro to Salary Negotiation 💰
           </button>
           <button
             onClick={() => setActiveTab('cheatsheets')}
@@ -346,7 +401,7 @@ export default function AdminPortal() {
                 : 'border-transparent text-textMuted hover:text-textMain'
             }`}
           >
-            <Zap size={15} /> 5. Quick Cheat Sheets
+            <Zap size={14} /> 7. Cheat Sheets
           </button>
         </div>
       </header>
@@ -371,7 +426,12 @@ export default function AdminPortal() {
                   </h2>
                   <p className="text-base text-textMuted max-w-3xl mt-3 leading-relaxed">
                     Full Stack Developer (React.js, Node.js) and Computer Science graduate from{' '}
-                    <span className="text-textMain font-semibold">MBES College of Engineering (CGPA: 6.06)</span> with hands-on experience building responsive web applications and REST APIs using React.js, Next.js, JavaScript, TypeScript, Node.js, Express.js, PostgreSQL, MongoDB, Supabase, and Git.
+                    <span className="text-textMain font-semibold">
+                      MBES College of Engineering (CGPA: 6.06)
+                    </span>{' '}
+                    with hands-on experience building responsive web applications and REST APIs
+                    using React.js, Next.js, JavaScript, TypeScript, Node.js, Express.js,
+                    PostgreSQL, MongoDB, Supabase, and Git.
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -383,13 +443,19 @@ export default function AdminPortal() {
                     <Download size={15} /> Download PDF Resume
                   </a>
                   <button
-                    onClick={() => handleCopy(
-                      `Umesh Temburwar | +91 8856087984 | umeshtemburwar2002@gmail.com | https://github.com/Umesh-Temburwar | https://www.linkedin.com/in/umesh-temburwar-673555373/`,
-                      'copy-all-contact'
-                    )}
+                    onClick={() =>
+                      handleCopy(
+                        `Umesh Temburwar | +91 8856087984 | umeshtemburwar2002@gmail.com | https://github.com/Umesh-Temburwar | https://www.linkedin.com/in/umesh-temburwar-673555373/`,
+                        'copy-all-contact'
+                      )
+                    }
                     className="px-5 py-3 rounded-xl border border-border bg-surface hover:border-primary text-textMain font-mono text-xs uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    {copiedId === 'copy-all-contact' ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
+                    {copiedId === 'copy-all-contact' ? (
+                      <Check size={15} className="text-emerald-400" />
+                    ) : (
+                      <Copy size={15} />
+                    )}
                     {copiedId === 'copy-all-contact' ? 'Copied Details' : 'Copy Contact Info'}
                   </button>
                 </div>
@@ -403,7 +469,9 @@ export default function AdminPortal() {
                 </div>
                 <div className="p-3.5 bg-background/60 rounded-xl border border-border">
                   <div className="text-[10px] font-mono text-textMuted uppercase">Email</div>
-                  <div className="text-sm font-bold text-textMain mt-1 truncate">umeshtemburwar2002@gmail.com</div>
+                  <div className="text-sm font-bold text-textMain mt-1 truncate">
+                    umeshtemburwar2002@gmail.com
+                  </div>
                 </div>
                 <div className="p-3.5 bg-background/60 rounded-xl border border-border">
                   <div className="text-[10px] font-mono text-textMuted uppercase">Education</div>
@@ -416,102 +484,62 @@ export default function AdminPortal() {
               </div>
             </div>
 
-            {/* Resume Summary & Sections breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Projects Card */}
+            {/* Quick Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-6 rounded-2xl border border-border bg-surface flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-xs text-primary uppercase">Core Projects</span>
-                    <span className="text-xs font-mono text-textMuted">3 Production Apps</span>
-                  </div>
-                  <ul className="space-y-3">
-                    <li className="p-3 rounded-xl bg-background border border-border/80">
-                      <div className="font-bold text-sm text-textMain">EdTech Learning Platform</div>
-                      <div className="text-xs text-textMuted font-mono mt-1">React, Node, Express, Supabase, RBAC</div>
-                    </li>
-                    <li className="p-3 rounded-xl bg-background border border-border/80">
-                      <div className="font-bold text-sm text-textMain">Inventory Management System</div>
-                      <div className="text-xs text-textMuted font-mono mt-1">Auto Spare Parts, MongoDB, Streaming CSV</div>
-                    </li>
-                    <li className="p-3 rounded-xl bg-background border border-border/80">
-                      <div className="font-bold text-sm text-textMain">ByteFest 2K25 Live Platform</div>
-                      <div className="text-xs text-textMuted font-mono mt-1">2,000+ Daily Visitors, 1,500+ Registrations</div>
-                    </li>
-                  </ul>
+                  <span className="font-mono text-xs text-amber-400 uppercase font-bold block mb-2">
+                    📒 Handwritten Engineering Notes
+                  </span>
+                  <h4 className="text-lg font-bold text-textMain">Visual Mental Models</h4>
+                  <p className="text-xs text-textMuted mt-2 leading-relaxed">
+                    ASCII architecture diagrams, V8 event loop memory maps, React Fiber re-render
+                    lifecycles, and database B-Tree index traversal rules.
+                  </p>
                 </div>
                 <button
-                  onClick={() => setActiveTab('projects')}
-                  className="mt-6 py-2.5 w-full rounded-xl bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-xs font-mono text-primary transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  onClick={() => setActiveTab('handwritten')}
+                  className="mt-6 py-2.5 w-full rounded-xl bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 text-xs font-mono text-amber-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  View Project Interview Blueprints →
+                  Open Handwritten Notebook →
                 </button>
               </div>
 
-              {/* Skills Card */}
               <div className="p-6 rounded-2xl border border-border bg-surface flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-xs text-primary uppercase">Skills Scope</span>
-                    <span className="text-xs font-mono text-textMuted">7 Core Disciplines</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      'JavaScript', 'TypeScript', 'Python', 'C/C++', 'C#',
-                      'React.js', 'Next.js', 'Tailwind CSS', 'HTML5/CSS3',
-                      'Node.js', 'Express.js', 'FastAPI', 'ASP.NET Core',
-                      'PostgreSQL', 'MongoDB', 'Supabase', 'SQL',
-                      'Git/GitHub', 'Docker', 'Linux', 'REST APIs'
-                    ].map((s) => (
-                      <span key={s} className="px-2.5 py-1 rounded-md bg-background border border-border font-mono text-xs text-textMuted">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
+                  <span className="font-mono text-xs text-emerald-400 uppercase font-bold block mb-2">
+                    💰 Salary & HR Negotiation Masterclass
+                  </span>
+                  <h4 className="text-lg font-bold text-textMain">Intro to Salary Offer</h4>
+                  <p className="text-xs text-textMuted mt-2 leading-relaxed">
+                    Step-by-step word-for-word scripts: Self-Introduction, handling 6.06 CGPA
+                    with confidence, and negotiating 6.5–9 LPA packages as a fresher.
+                  </p>
                 </div>
                 <button
-                  onClick={() => setActiveTab('skills')}
-                  className="mt-6 py-2.5 w-full rounded-xl bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-xs font-mono text-primary transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  onClick={() => setActiveTab('salary-pipeline')}
+                  className="mt-6 py-2.5 w-full rounded-xl bg-emerald-400/10 hover:bg-emerald-400/20 border border-emerald-400/30 text-xs font-mono text-emerald-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  Explore Complete Notes (Basic to Adv) →
+                  View Salary & HR Guide →
                 </button>
               </div>
 
-              {/* Interview Rounds Card */}
               <div className="p-6 rounded-2xl border border-border bg-surface flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-xs text-primary uppercase">Interview Rounds</span>
-                    <span className="text-xs font-mono text-textMuted">Rounds 1 through 5</span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="p-2.5 rounded-lg bg-background border border-border flex items-center justify-between text-xs font-mono">
-                      <span>R1: Core CS Fundamentals (OA)</span>
-                      <span className="text-primary">DSA · DBMS</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-background border border-border flex items-center justify-between text-xs font-mono">
-                      <span>R2: Frontend Deep Dive</span>
-                      <span className="text-primary">React · JS · Web</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-background border border-border flex items-center justify-between text-xs font-mono">
-                      <span>R3: Backend & System Design</span>
-                      <span className="text-primary">Node · APIs · DB</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-background border border-border flex items-center justify-between text-xs font-mono">
-                      <span>R4: Machine Coding & Bugs</span>
-                      <span className="text-primary">Live Code</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-background border border-border flex items-center justify-between text-xs font-mono">
-                      <span>R5: HR & Leadership Fit</span>
-                      <span className="text-primary">STAR Format</span>
-                    </div>
-                  </div>
+                  <span className="font-mono text-xs text-primary uppercase font-bold block mb-2">
+                    🎯 Round-Wise Technical Q&A
+                  </span>
+                  <h4 className="text-lg font-bold text-textMain">5 Full Rounds Covered</h4>
+                  <p className="text-xs text-textMuted mt-2 leading-relaxed">
+                    Online Assessments (DSA, OOP, OS, Networks), Frontend Deep Dive, Backend System
+                    Design, Machine Coding, and HR Behavioral fit.
+                  </p>
                 </div>
                 <button
                   onClick={() => setActiveTab('interview')}
-                  className="mt-6 py-2.5 w-full rounded-xl bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-xs font-mono text-primary transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="mt-6 py-2.5 w-full rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs font-mono text-primary transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  Start Round-Wise Preparation →
+                  Study Technical Rounds →
                 </button>
               </div>
             </div>
@@ -519,14 +547,17 @@ export default function AdminPortal() {
         )}
 
         {/* ========================================================== */}
-        {/* TAB 2: SKILLS MASTERY NOTES (BASIC TO ADVANCED) */}
+        {/* TAB 2: SKILLS MASTERY NOTES */}
         {/* ========================================================== */}
         {activeTab === 'skills' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Search and Filters Bar */}
             <div className="p-5 rounded-2xl border border-border bg-surface flex flex-col md:flex-row gap-4 justify-between items-center">
               <div className="relative w-full md:w-96">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-textMuted" />
+                <Search
+                  size={16}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-textMuted"
+                />
                 <input
                   type="text"
                   placeholder="Search skills, concepts, or algorithms..."
@@ -537,7 +568,6 @@ export default function AdminPortal() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                {/* Category Dropdown */}
                 <select
                   value={selectedSkillCategory}
                   onChange={(e) => setSelectedSkillCategory(e.target.value)}
@@ -551,7 +581,6 @@ export default function AdminPortal() {
                   ))}
                 </select>
 
-                {/* Level Dropdown */}
                 <select
                   value={selectedSkillLevel}
                   onChange={(e) => setSelectedSkillLevel(e.target.value)}
@@ -624,7 +653,6 @@ export default function AdminPortal() {
                           {/* Expanded Topic Details */}
                           {isExpanded && (
                             <div className="px-5 pb-6 space-y-5 border-t border-border/40 pt-4 bg-background/30">
-                              {/* Key Architectural Points */}
                               <div>
                                 <h5 className="font-mono text-xs uppercase tracking-wider text-primary mb-2.5 flex items-center gap-1.5">
                                   <Sparkles size={13} /> Key Engineering Principles & Notes
@@ -642,7 +670,6 @@ export default function AdminPortal() {
                                 </ul>
                               </div>
 
-                              {/* Code Snippet (if available) */}
                               {topic.codeExample && (
                                 <div>
                                   <div className="flex items-center justify-between mb-1.5">
@@ -650,10 +677,16 @@ export default function AdminPortal() {
                                       Implementation Code Example
                                     </span>
                                     <button
-                                      onClick={() => handleCopy(topic.codeExample!, `code-${topic.id}`)}
+                                      onClick={() =>
+                                        handleCopy(topic.codeExample!, `code-${topic.id}`)
+                                      }
                                       className="px-2.5 py-1 rounded bg-surface border border-border text-[11px] font-mono text-textMuted hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
                                     >
-                                      {copiedId === `code-${topic.id}` ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                                      {copiedId === `code-${topic.id}` ? (
+                                        <Check size={12} className="text-emerald-400" />
+                                      ) : (
+                                        <Copy size={12} />
+                                      )}
                                       {copiedId === `code-${topic.id}` ? 'Copied' : 'Copy Code'}
                                     </button>
                                   </div>
@@ -663,30 +696,32 @@ export default function AdminPortal() {
                                 </div>
                               )}
 
-                              {/* Common Interview Questions for this topic */}
-                              {topic.commonInterviewQuestions && topic.commonInterviewQuestions.length > 0 && (
-                                <div>
-                                  <h5 className="font-mono text-xs uppercase tracking-wider text-amber-400 mb-2">
-                                    Top Interviewer Questions & Answers
-                                  </h5>
-                                  <div className="space-y-2.5">
-                                    {topic.commonInterviewQuestions.map((qa, idx) => (
-                                      <div
-                                        key={idx}
-                                        className="p-3.5 rounded-xl bg-surface border border-border"
-                                      >
-                                        <div className="font-bold text-xs text-textMain mb-1.5 flex items-start gap-2">
-                                          <span className="text-primary font-mono shrink-0">Q{idx + 1}:</span>
-                                          <span>{qa.q}</span>
+                              {topic.commonInterviewQuestions &&
+                                topic.commonInterviewQuestions.length > 0 && (
+                                  <div>
+                                    <h5 className="font-mono text-xs uppercase tracking-wider text-amber-400 mb-2">
+                                      Top Interviewer Questions & Answers
+                                    </h5>
+                                    <div className="space-y-2.5">
+                                      {topic.commonInterviewQuestions.map((qa, idx) => (
+                                        <div
+                                          key={idx}
+                                          className="p-3.5 rounded-xl bg-surface border border-border"
+                                        >
+                                          <div className="font-bold text-xs text-textMain mb-1.5 flex items-start gap-2">
+                                            <span className="text-primary font-mono shrink-0">
+                                              Q{idx + 1}:
+                                            </span>
+                                            <span>{qa.q}</span>
+                                          </div>
+                                          <div className="text-xs text-textMuted leading-relaxed pl-6">
+                                            {qa.a}
+                                          </div>
                                         </div>
-                                        <div className="text-xs text-textMuted leading-relaxed pl-6">
-                                          {qa.a}
-                                        </div>
-                                      </div>
-                                    ))}
+                                      ))}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
                             </div>
                           )}
                         </div>
@@ -700,7 +735,155 @@ export default function AdminPortal() {
         )}
 
         {/* ========================================================== */}
-        {/* TAB 3: PROJECTS INTERVIEW BLUEPRINT */}
+        {/* TAB 3: HANDWRITTEN ENGINEERING NOTEBOOK 📒 */}
+        {/* ========================================================== */}
+        {activeTab === 'handwritten' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header Description */}
+            <div className="p-6 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-mono text-[10px] uppercase font-bold">
+                  Engineering Notebook Mode
+                </span>
+                <h3 className="text-2xl font-bold text-textMain mt-1 flex items-center gap-2">
+                  <span>Umesh's Handwritten Mental Models & Architectural Diagrams</span>
+                </h3>
+                <p className="text-xs text-textMuted mt-1">
+                  Conceptual sketches, memory layouts, execution flows, and rules-of-thumb formatted
+                  like personal engineering journal entries.
+                </p>
+              </div>
+
+              <div className="text-xs font-mono text-amber-400/90 bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                Total Pages: {handwrittenNotesData.length}
+              </div>
+            </div>
+
+            {/* Note Selector Pills */}
+            <div className="flex overflow-x-auto custom-scrollbar gap-2 p-1.5 bg-surface border border-border rounded-2xl">
+              {handwrittenNotesData.map((note) => (
+                <button
+                  key={note.id}
+                  onClick={() => setSelectedHandwrittenId(note.id)}
+                  className={`px-4 py-2.5 rounded-xl font-mono text-xs transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                    selectedHandwrittenId === note.id
+                      ? 'bg-amber-400 text-background font-bold shadow-md'
+                      : 'text-textMuted hover:text-amber-300 hover:bg-background'
+                  }`}
+                >
+                  <span>Page {note.notebookPageNum}:</span>
+                  <span>{note.topic.split('Visual')[0].split(':')[0]}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Active Handwritten Note Page */}
+            <div className="p-8 rounded-2xl border border-amber-500/30 bg-[#0d0f12] relative overflow-hidden space-y-6 shadow-2xl">
+              {/* Notebook Header */}
+              <div className="border-b border-amber-500/20 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2 py-0.5 rounded bg-amber-400/10 text-amber-400 font-mono text-[10px] font-bold">
+                      Page {activeHandwritten.notebookPageNum} of {handwrittenNotesData.length}
+                    </span>
+                    <span className="text-[11px] font-mono text-textMuted">
+                      Category: {activeHandwritten.category}
+                    </span>
+                  </div>
+                  <h4 className="text-xl md:text-2xl font-bold text-amber-200">
+                    {activeHandwritten.topic}
+                  </h4>
+                </div>
+
+                <div className="px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono text-xs">
+                  {activeHandwritten.highlightTag}
+                </div>
+              </div>
+
+              {/* Core Concept */}
+              <div className="p-4 rounded-xl bg-surface/60 border border-border/80">
+                <span className="font-mono text-[10px] uppercase text-amber-400 font-bold block mb-1">
+                  Core Mental Model:
+                </span>
+                <p className="text-xs text-textMain leading-relaxed font-sans">
+                  {activeHandwritten.coreConcept}
+                </p>
+              </div>
+
+              {/* Visual ASCII / Architecture Diagram */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-mono text-xs uppercase text-textMuted flex items-center gap-1.5">
+                    <Terminal size={14} className="text-amber-400" /> Architectural Blueprint &
+                    Memory Map
+                  </span>
+                  <button
+                    onClick={() => handleCopy(activeHandwritten.visualDiagram, 'copy-diagram')}
+                    className="text-xs font-mono text-textMuted hover:text-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    {copiedId === 'copy-diagram' ? (
+                      <Check size={12} className="text-emerald-400" />
+                    ) : (
+                      <Copy size={12} />
+                    )}
+                    {copiedId === 'copy-diagram' ? 'Copied' : 'Copy Diagram'}
+                  </button>
+                </div>
+                <pre className="p-5 rounded-xl bg-[#07080a] border border-amber-500/20 font-mono text-xs text-amber-300/95 overflow-x-auto custom-scrollbar leading-tight shadow-inner">
+                  {activeHandwritten.visualDiagram}
+                </pre>
+              </div>
+
+              {/* Rules of Thumb & Interview Catchphrases */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-5 rounded-xl bg-surface/40 border border-border space-y-2.5">
+                  <span className="font-mono text-xs uppercase text-emerald-400 font-bold block">
+                    ⚡ Umesh's Golden Rules of Thumb
+                  </span>
+                  <ul className="space-y-2">
+                    {activeHandwritten.rulesOfThumb.map((rule, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs text-textMain flex items-start gap-2 bg-background/50 p-2 rounded-lg border border-border/40 font-mono"
+                      >
+                        <span className="text-emerald-400 font-bold">•</span>
+                        <span>{rule}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-5 rounded-xl bg-surface/40 border border-border space-y-2.5">
+                  <span className="font-mono text-xs uppercase text-amber-400 font-bold block">
+                    💬 Interviewer Buzz-Phrases to Speak
+                  </span>
+                  <ul className="space-y-2">
+                    {activeHandwritten.interviewerCatchphrases.map((phrase, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs text-textMain italic flex items-start gap-2 bg-background/50 p-2 rounded-lg border border-border/40"
+                      >
+                        <span className="text-amber-400 font-bold">"</span>
+                        <span>{phrase}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Quick Mnemonic Pill */}
+              <div className="p-3.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-xs font-mono text-amber-200 flex items-center gap-2">
+                <Sparkles size={15} className="text-amber-400 shrink-0" />
+                <span>
+                  <strong>Exam Memory Mnemonic:</strong> {activeHandwritten.quickMnemonic}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================== */}
+        {/* TAB 4: PROJECTS INTERVIEW BLUEPRINT */}
         {/* ========================================================== */}
         {activeTab === 'projects' && (
           <div className="space-y-6 animate-fadeIn">
@@ -724,14 +907,15 @@ export default function AdminPortal() {
 
             {/* Active Project Dossier */}
             <div className="p-8 rounded-2xl border border-border bg-surface/50 space-y-8 relative overflow-hidden">
-              {/* Project Hero Header */}
               <div className="border-b border-border/60 pb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-mono text-[10px] uppercase">
                       {activeProject.role}
                     </span>
-                    <span className="text-xs font-mono text-textMuted">• {activeProject.timeline}</span>
+                    <span className="text-xs font-mono text-textMuted">
+                      • {activeProject.timeline}
+                    </span>
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-textMain tracking-tight">
                     {activeProject.title}
@@ -762,7 +946,11 @@ export default function AdminPortal() {
                       onClick={() => handleCopy(activeProject.elevatorPitch.quick30Sec, 'pitch-30')}
                       className="text-xs font-mono text-textMuted hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
                     >
-                      {copiedId === 'pitch-30' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                      {copiedId === 'pitch-30' ? (
+                        <Check size={12} className="text-emerald-400" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
                       {copiedId === 'pitch-30' ? 'Copied' : 'Copy'}
                     </button>
                   </div>
@@ -777,10 +965,16 @@ export default function AdminPortal() {
                       <Clock size={13} /> 90-Second In-Depth Pitch
                     </span>
                     <button
-                      onClick={() => handleCopy(activeProject.elevatorPitch.detailed90Sec, 'pitch-90')}
+                      onClick={() =>
+                        handleCopy(activeProject.elevatorPitch.detailed90Sec, 'pitch-90')
+                      }
                       className="text-xs font-mono text-textMuted hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
                     >
-                      {copiedId === 'pitch-90' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                      {copiedId === 'pitch-90' ? (
+                        <Check size={12} className="text-emerald-400" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
                       {copiedId === 'pitch-90' ? 'Copied' : 'Copy'}
                     </button>
                   </div>
@@ -813,38 +1007,17 @@ export default function AdminPortal() {
                 </div>
               </div>
 
-              {/* Tech Choice Reasoning Table */}
-              <div>
-                <h4 className="font-mono text-xs uppercase tracking-wider text-primary mb-3">
-                  Why this Tech Stack? (Architectural Trade-Offs)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {activeProject.architecture.techChoiceReasoning.map((item, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-background border border-border space-y-2">
-                      <div className="font-bold text-sm text-textMain flex items-center gap-1.5 text-primary">
-                        <Check size={15} /> {item.tech}
-                      </div>
-                      <div className="text-xs text-textMuted leading-relaxed">
-                        <span className="font-mono text-textMain font-semibold">Why Selected: </span>
-                        {item.why}
-                      </div>
-                      <div className="text-xs text-textMuted/80 border-t border-border/40 pt-1.5">
-                        <span className="font-mono text-red-400 font-semibold">Alternative Rejected: </span>
-                        {item.alternativeRejected}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Deep Engineering Challenges & Solutions */}
+              {/* Engineering Challenges */}
               <div>
                 <h4 className="font-mono text-xs uppercase tracking-wider text-red-400 mb-3 flex items-center gap-2">
-                  <AlertCircle size={14} /> Difficult Engineering Challenges & How I Solved Them
+                  <AlertCircle size={14} /> Difficult Engineering Challenges & Solutions
                 </h4>
                 <div className="space-y-4">
                   {activeProject.engineeringChallenges.map((ch, idx) => (
-                    <div key={idx} className="p-5 rounded-xl bg-background border border-border space-y-3">
+                    <div
+                      key={idx}
+                      className="p-5 rounded-xl bg-background border border-border space-y-3"
+                    >
                       <div className="font-bold text-sm text-textMain flex items-start gap-2">
                         <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-[10px]">
                           Challenge {idx + 1}
@@ -857,54 +1030,27 @@ export default function AdminPortal() {
                         </span>
                         {ch.solution}
                       </div>
-                      <div className="text-[11px] font-mono text-textMuted">
-                        <span className="text-primary font-semibold">Key Takeaway: </span>
-                        {ch.lessonLearned}
-                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Top Project-Specific Interview Q&A */}
+              {/* Project QA */}
               <div>
                 <h4 className="font-mono text-xs uppercase tracking-wider text-amber-400 mb-3">
-                  Project Interview Questions & STAR Method Responses
+                  Project Interview Q&A (STAR Model)
                 </h4>
                 <div className="space-y-4">
                   {activeProject.interviewQA.map((qa, idx) => (
-                    <div key={idx} className="p-5 rounded-xl bg-background border border-border space-y-3">
+                    <div
+                      key={idx}
+                      className="p-5 rounded-xl bg-background border border-border space-y-3"
+                    >
                       <div className="font-bold text-sm text-textMain flex items-start gap-2">
                         <span className="text-primary font-mono shrink-0">Q{idx + 1}:</span>
                         <span>{qa.question}</span>
                       </div>
-                      <p className="text-xs text-textMuted leading-relaxed pl-6">
-                        {qa.answer}
-                      </p>
-
-                      {qa.starTechnique && (
-                        <div className="ml-6 p-4 rounded-xl bg-surface border border-primary/20 space-y-2 mt-2">
-                          <span className="font-mono text-[10px] uppercase text-primary tracking-widest font-bold block">
-                            Structured STAR Model Answer
-                          </span>
-                          <div className="text-xs text-textMain">
-                            <strong className="text-primary font-mono">S (Situation): </strong>
-                            {qa.starTechnique.situation}
-                          </div>
-                          <div className="text-xs text-textMain">
-                            <strong className="text-primary font-mono">T (Task): </strong>
-                            {qa.starTechnique.task}
-                          </div>
-                          <div className="text-xs text-textMain">
-                            <strong className="text-primary font-mono">A (Action): </strong>
-                            {qa.starTechnique.action}
-                          </div>
-                          <div className="text-xs text-textMain">
-                            <strong className="text-primary font-mono">R (Result): </strong>
-                            {qa.starTechnique.result}
-                          </div>
-                        </div>
-                      )}
+                      <p className="text-xs text-textMuted leading-relaxed pl-6">{qa.answer}</p>
                     </div>
                   ))}
                 </div>
@@ -914,7 +1060,7 @@ export default function AdminPortal() {
         )}
 
         {/* ========================================================== */}
-        {/* TAB 4: ROUND-WISE INTERVIEW MASTER GUIDE */}
+        {/* TAB 5: ROUND-WISE INTERVIEW MASTER GUIDE */}
         {/* ========================================================== */}
         {activeTab === 'interview' && (
           <div className="space-y-6 animate-fadeIn">
@@ -948,25 +1094,14 @@ export default function AdminPortal() {
                   <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-mono text-[10px] font-bold">
                     Round {activeRound.roundNumber} of 5
                   </span>
-                  <span className="text-xs font-mono text-textMuted">• Focus: {activeRound.focusArea}</span>
+                  <span className="text-xs font-mono text-textMuted">
+                    • Focus: {activeRound.focusArea}
+                  </span>
                 </div>
                 <h3 className="text-2xl font-bold text-textMain">{activeRound.roundName}</h3>
-                <p className="text-xs text-textMuted mt-2 leading-relaxed">{activeRound.overview}</p>
-              </div>
-
-              {/* Strategy Pills */}
-              <div className="p-4 rounded-xl bg-background border border-border">
-                <span className="font-mono text-xs uppercase tracking-wider text-primary font-bold block mb-2">
-                  Winning Strategies for this Round
-                </span>
-                <ul className="space-y-1.5">
-                  {activeRound.keyStrategies.map((strat, idx) => (
-                    <li key={idx} className="text-xs text-textMain flex items-start gap-2">
-                      <span className="text-primary font-bold">✓</span>
-                      <span>{strat}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-xs text-textMuted mt-2 leading-relaxed">
+                  {activeRound.overview}
+                </p>
               </div>
 
               {/* Questions List */}
@@ -994,17 +1129,6 @@ export default function AdminPortal() {
                             <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-textMuted">
                               {q.category}
                             </span>
-                            <span
-                              className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
-                                q.difficulty === 'Hard'
-                                  ? 'bg-red-500/10 text-red-400 border border-red-500/30'
-                                  : q.difficulty === 'Medium'
-                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                              }`}
-                            >
-                              {q.difficulty}
-                            </span>
                           </div>
                           <h5 className="font-bold text-sm text-textMain">{q.question}</h5>
                         </div>
@@ -1020,35 +1144,9 @@ export default function AdminPortal() {
                           </div>
 
                           {q.codeSnippet && (
-                            <div>
-                              <div className="flex items-center justify-between mb-1.5">
-                                <span className="font-mono text-[11px] text-textMuted uppercase">
-                                  Reference Code Solution
-                                </span>
-                                <button
-                                  onClick={() => handleCopy(q.codeSnippet!, `code-${q.id}`)}
-                                  className="text-[11px] font-mono text-textMuted hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
-                                >
-                                  {copiedId === `code-${q.id}` ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                                  {copiedId === `code-${q.id}` ? 'Copied' : 'Copy'}
-                                </button>
-                              </div>
-                              <pre className="p-3.5 rounded-xl bg-[#090b0e] border border-border font-mono text-xs text-emerald-400 overflow-x-auto custom-scrollbar leading-relaxed">
-                                <code>{q.codeSnippet}</code>
-                              </pre>
-                            </div>
-                          )}
-
-                          {q.interviewTip && (
-                            <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 text-xs text-textMain flex items-start gap-2">
-                              <Sparkles size={14} className="text-primary shrink-0 mt-0.5" />
-                              <div>
-                                <span className="font-mono text-[11px] text-primary font-bold uppercase block mb-0.5">
-                                  Pro Candidate Tip:
-                                </span>
-                                <span className="text-textMuted">{q.interviewTip}</span>
-                              </div>
-                            </div>
+                            <pre className="p-3.5 rounded-xl bg-[#090b0e] border border-border font-mono text-xs text-emerald-400 overflow-x-auto custom-scrollbar leading-relaxed">
+                              <code>{q.codeSnippet}</code>
+                            </pre>
                           )}
                         </div>
                       )}
@@ -1061,7 +1159,201 @@ export default function AdminPortal() {
         )}
 
         {/* ========================================================== */}
-        {/* TAB 5: QUICK REVISION CHEAT SHEETS */}
+        {/* TAB 6: COMPLETE PIPELINE: INTRO TO SALARY NEGOTIATION 💰 */}
+        {/* ========================================================== */}
+        {activeTab === 'salary-pipeline' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header Banner */}
+            <div className="p-6 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-400 font-mono text-[10px] uppercase font-bold">
+                  Complete Candidate Pipeline
+                </span>
+                <h3 className="text-2xl font-bold text-textMain mt-1">
+                  From Self-Introduction to Salary Offer Negotiation
+                </h3>
+                <p className="text-xs text-textMuted mt-1">
+                  Tailored word-for-word spoken scripts for Umesh Temburwar (Full Stack Developer,
+                  MBES CSE 6.06 CGPA).
+                </p>
+              </div>
+
+              <div className="text-xs font-mono text-emerald-400/90 bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-500/20">
+                4 Comprehensive Stages
+              </div>
+            </div>
+
+            {/* Stage Selector Tabs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {salaryAndHRPipelineData.map((stage) => (
+                <button
+                  key={stage.id}
+                  onClick={() => setSelectedSalaryStageId(stage.id)}
+                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                    selectedSalaryStageId === stage.id
+                      ? 'border-emerald-400 bg-emerald-400/10 shadow-[0_0_15px_rgba(52,211,153,0.15)]'
+                      : 'border-border bg-surface hover:border-emerald-400/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-[10px] text-emerald-400 uppercase font-bold">
+                      Stage {stage.stageNumber}
+                    </span>
+                    <span className="text-[10px] font-mono text-textMuted">
+                      {stage.estimatedDuration}
+                    </span>
+                  </div>
+                  <div className="font-bold text-xs text-textMain truncate">{stage.badge}</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Active Stage Details */}
+            <div className="p-8 rounded-2xl border border-emerald-500/30 bg-[#0c100e] space-y-6">
+              <div className="border-b border-emerald-500/20 pb-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-400 font-mono text-[10px] font-bold">
+                    Stage {activeSalaryStage.stageNumber}: {activeSalaryStage.badge}
+                  </span>
+                  <span className="text-xs font-mono text-textMuted">
+                    • Expected Time: {activeSalaryStage.estimatedDuration}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold text-emerald-200">
+                  {activeSalaryStage.stageTitle}
+                </h3>
+                <p className="text-xs text-textMuted mt-1">{activeSalaryStage.stageSubtitle}</p>
+              </div>
+
+              {/* Interviewer Mindset Insight */}
+              <div className="p-4 rounded-xl bg-surface/80 border border-border flex items-start gap-3">
+                <HelpCircle size={18} className="text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-mono text-xs uppercase tracking-wider text-emerald-400 font-bold block mb-1">
+                    What the Interviewer is Secretly Evaluating in this Stage:
+                  </span>
+                  <p className="text-xs text-textMuted leading-relaxed">
+                    {activeSalaryStage.interviewerMindset}
+                  </p>
+                </div>
+              </div>
+
+              {/* Conversations & Spoken Scripts */}
+              <div className="space-y-6">
+                <h4 className="font-mono text-xs uppercase tracking-wider text-textMuted">
+                  Questions & Exact Spoken Scripts
+                </h4>
+
+                {activeSalaryStage.conversations.map((conv, idx) => (
+                  <div
+                    key={idx}
+                    className="p-6 rounded-2xl bg-surface/50 border border-emerald-500/20 space-y-4"
+                  >
+                    {/* The Interviewer's Question */}
+                    <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-3">
+                      <div>
+                        <span className="font-mono text-[10px] text-emerald-400 font-bold uppercase block mb-1">
+                          Question {idx + 1}
+                        </span>
+                        <h5 className="text-base font-bold text-textMain">
+                          "{conv.interviewerQuestion}"
+                        </h5>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(conv.suggestedAnswer, `script-${idx}`)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-400/10 border border-emerald-400/30 text-xs font-mono text-emerald-300 hover:bg-emerald-400/20 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                      >
+                        {copiedId === `script-${idx}` ? (
+                          <Check size={13} className="text-emerald-400" />
+                        ) : (
+                          <Copy size={13} />
+                        )}
+                        {copiedId === `script-${idx}` ? 'Copied' : 'Copy Script'}
+                      </button>
+                    </div>
+
+                    {/* Umesh's Recommended Spoken Answer */}
+                    <div className="p-4 rounded-xl bg-[#080b09] border border-border/80">
+                      <span className="font-mono text-[10px] uppercase text-emerald-400 font-bold block mb-2 flex items-center gap-1">
+                        <MessageSquare size={13} /> Your Recommended Spoken Answer (Read / Practice
+                        this):
+                      </span>
+                      <p className="text-xs text-textMain leading-relaxed whitespace-pre-line font-sans">
+                        {conv.suggestedAnswer}
+                      </p>
+                    </div>
+
+                    {/* Alternative Scripts (e.g. 45s vs 2min, or pushy HR) */}
+                    {conv.alternativeScripts && conv.alternativeScripts.length > 0 && (
+                      <div className="space-y-2">
+                        <span className="font-mono text-[10px] uppercase text-textMuted font-bold block">
+                          Alternative / Situation-Specific Variations:
+                        </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {conv.alternativeScripts.map((alt, i) => (
+                            <div
+                              key={i}
+                              className="p-3.5 rounded-xl bg-background border border-border"
+                            >
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className="font-mono text-[11px] text-emerald-300 font-bold">
+                                  {alt.label}
+                                </span>
+                                <button
+                                  onClick={() => handleCopy(alt.script, `alt-${idx}-${i}`)}
+                                  className="text-[10px] font-mono text-textMuted hover:text-emerald-400 transition-colors flex items-center gap-1 cursor-pointer"
+                                >
+                                  {copiedId === `alt-${idx}-${i}` ? (
+                                    <Check size={11} className="text-emerald-400" />
+                                  ) : (
+                                    <Copy size={11} />
+                                  )}
+                                </button>
+                              </div>
+                              <p className="text-xs text-textMuted leading-relaxed italic">
+                                "{alt.script}"
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Interviewer Secret Checklist & What NOT to say */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div className="p-4 rounded-xl bg-background/80 border border-border space-y-2">
+                        <span className="font-mono text-[10px] uppercase text-emerald-400 font-bold flex items-center gap-1">
+                          <CheckCircle2 size={13} /> What Interviewer Secretly Checks
+                        </span>
+                        <ul className="space-y-1.5">
+                          {conv.interviewerSecretChecklist.map((checkItem, cIdx) => (
+                            <li
+                              key={cIdx}
+                              className="text-xs text-textMuted flex items-start gap-1.5"
+                            >
+                              <span className="text-emerald-400 font-bold">✓</span>
+                              <span>{checkItem}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/20 space-y-2">
+                        <span className="font-mono text-[10px] uppercase text-red-400 font-bold flex items-center gap-1">
+                          <AlertCircle size={13} /> What NOT to Say (Instant Red Flags)
+                        </span>
+                        <p className="text-xs text-red-300 leading-relaxed">{conv.whatNOTtoSay}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================== */}
+        {/* TAB 7: QUICK REVISION CHEAT SHEETS */}
         {/* ========================================================== */}
         {activeTab === 'cheatsheets' && (
           <div className="space-y-6 animate-fadeIn">
@@ -1111,12 +1403,14 @@ export default function AdminPortal() {
                           className="text-textMuted hover:text-primary transition-colors p-1 cursor-pointer shrink-0"
                           title="Copy command"
                         >
-                          {copiedId === `cmd-${idx}` ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                          {copiedId === `cmd-${idx}` ? (
+                            <Check size={14} className="text-emerald-400" />
+                          ) : (
+                            <Copy size={14} />
+                          )}
                         </button>
                       </div>
-                      <p className="text-xs text-textMuted leading-relaxed">
-                        {item.description}
-                      </p>
+                      <p className="text-xs text-textMuted leading-relaxed">{item.description}</p>
                     </div>
 
                     {item.example && (
