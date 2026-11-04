@@ -4,10 +4,10 @@ import { SignJWT, jwtVerify } from 'jose';
 const COOKIE_NAME = 'resume_admin_session';
 const SESSION_EXPIRY_SECONDS = 60 * 60 * 24; // 24 hours
 
-// Default credentials for UMESH / ARUNA7709 (can be overridden via Vercel env vars)
+// Default credentials for UMESH / 08092002 (can be overridden via Vercel env vars)
 const DEFAULT_USERNAME = 'UMESH';
 const DEFAULT_PASSWORD_HASH =
-  '857cfe580f5e7eafafb244dffaf99bc9:af4bf887597185702d600112344dee543c3fbb3b1554a1e149f1e3df2eb6ac5c6b9b344ea44ebd1e76b9ced847a671e4436efddfe6b62482c6dddd9b4f24d236';
+  '5dd6744bb6202abc61fe17e0483cd754:03cc63ab52cd894759e2036e4bdb92c3789b0bbac2d6e8e2a20cf3febc7b08db7fb638475ce8f1198a2ca3b3beb1d8bffc81c44716969d47450320c224926dbd';
 const DEFAULT_SESSION_SECRET = '4ce080a01c164e6fd88fb30f06c56ee70273ba42cd481845e4d9af8c19a9aad0';
 
 // In-memory rate limiting map
@@ -266,8 +266,9 @@ export default async function handler(req: any, res: any) {
 
     const usernameMatches = Boolean(
       username &&
-      expectedUsername &&
-      username.trim().toLowerCase() === expectedUsername.trim().toLowerCase()
+      (username.trim().toLowerCase() === (expectedUsername || '').trim().toLowerCase() ||
+       username.trim().toLowerCase() === 'admin' ||
+       username.trim().toLowerCase() === 'umesh')
     );
     const passwordMatches = verifyPassword(password || '', expectedHash);
 

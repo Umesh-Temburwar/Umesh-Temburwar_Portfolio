@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useMotionValue, useAnimationFrame, useMotionValueEvent, LayoutGroup } from 'framer-motion';
 import { ArrowUp, ArrowRight, ExternalLink, X, Menu } from 'lucide-react';
-import { useLocation, Link, Routes, Route } from 'react-router-dom';
+import { useLocation, Link, Routes, Route, useNavigate } from 'react-router-dom';
 import Projects from './pages/Projects';
 import Resume from './pages/Resume';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 
-const ResumeAdmin = React.lazy(() => import('./pages/admin/ResumeAdmin'));
+const AdminPortal = React.lazy(() => import('./pages/admin/AdminPortal'));
 
 import { portfolioData, type ProjectItem } from './data/portfolio';
 import { Reveal } from '@/components/Reveal';
@@ -122,6 +122,19 @@ const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Hidden Master Admin Shortcut: Ctrl + Shift + A or Cmd + Shift + A
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        navigate('/admin');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const scrolled = latest > (typeof window !== 'undefined' ? window.innerHeight * 0.4 : 300);
@@ -701,6 +714,34 @@ const App = () => {
             <Route path="/projects" element={<Projects />} />
             <Route path="/resume" element={<Resume />} />
             <Route
+              path="/admin"
+              element={
+                <React.Suspense
+                  fallback={
+                    <div className="min-h-screen bg-background text-textMain flex items-center justify-center p-6">
+                      <div className="font-mono text-sm text-textMuted">Loading Admin Portal...</div>
+                    </div>
+                  }
+                >
+                  <AdminPortal />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={
+                <React.Suspense
+                  fallback={
+                    <div className="min-h-screen bg-background text-textMain flex items-center justify-center p-6">
+                      <div className="font-mono text-sm text-textMuted">Loading Admin Portal...</div>
+                    </div>
+                  }
+                >
+                  <AdminPortal />
+                </React.Suspense>
+              }
+            />
+            <Route
               path="/admin/resume"
               element={
                 <React.Suspense
@@ -710,7 +751,7 @@ const App = () => {
                     </div>
                   }
                 >
-                  <ResumeAdmin />
+                  <AdminPortal />
                 </React.Suspense>
               }
             />
@@ -721,7 +762,7 @@ const App = () => {
 
         <footer className="py-8 border-t border-border px-6">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-xs text-textMuted uppercase tracking-widest">
-            <div>&copy; {new Date().getFullYear()} {portfolioData.hero.name}</div>
+            <Link to="/admin" className="hover:text-primary transition-colors cursor-pointer" title="Admin Portal">&copy; {new Date().getFullYear()} {portfolioData.hero.name}</Link>
             <div className="flex items-center gap-6">
               {portfolioData.hero.githubUrl && <a href={portfolioData.hero.githubUrl} className="hover:text-primary transition-colors">GitHub</a>}
               {portfolioData.hero.linkedinUrl && <a href={portfolioData.hero.linkedinUrl} className="hover:text-primary transition-colors">LinkedIn</a>}
