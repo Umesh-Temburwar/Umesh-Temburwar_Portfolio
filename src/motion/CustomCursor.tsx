@@ -55,13 +55,19 @@ export const CustomCursor: React.FC = () => {
       setIsVisible(false);
     };
 
+    const handleMouseEnter = () => {
+      setIsVisible(true);
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mouseover', handleMouseOver, { passive: true });
+    document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [isVisible, mouseX, mouseY]);
@@ -124,3 +130,4 @@ export const CustomCursor: React.FC = () => {
     </>
   );
 };
+

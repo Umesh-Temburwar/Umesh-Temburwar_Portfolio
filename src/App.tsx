@@ -151,8 +151,6 @@ const FloatingNavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isNavHidden, setIsNavHidden] = useState(false);
-  const lastScrollY = useRef(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -168,19 +166,11 @@ const FloatingNavBar = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [navigate]);
 
-  // Scroll detection: elevation, shrink, and hide/reveal behavior
+  // Scroll detection: elevation, backdrop blur, and active section highlight
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 40);
-
-      // Hide navbar when scrolling down past 120px, reveal immediately when scrolling up
-      if (currentScrollY > lastScrollY.current && currentScrollY > 120) {
-        setIsNavHidden(true);
-      } else {
-        setIsNavHidden(false);
-      }
-      lastScrollY.current = currentScrollY;
 
       // Active section highlight tracking
       if (location.pathname === '/') {
@@ -204,7 +194,7 @@ const FloatingNavBar = () => {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     if (location.pathname === '/') {
       e.preventDefault();
-      scrollTo('#' + targetId, -90);
+      scrollTo('#' + targetId, -100);
       setActiveSection(targetId);
       if (window.history.pushState) {
         window.history.pushState(null, '', '#' + targetId);
@@ -217,11 +207,8 @@ const FloatingNavBar = () => {
   return (
     <motion.header
       initial={{ y: -60, opacity: 0 }}
-      animate={{
-        y: isNavHidden ? -100 : 0,
-        opacity: isNavHidden ? 0 : 1,
-      }}
-      transition={{ duration: 0.35, ease: primaryEase }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: primaryEase }}
       className="fixed top-3 sm:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
     >
       <nav
@@ -390,7 +377,6 @@ const ContactDetailsRow = () => {
             <Mail size={14} className="text-orange-500 group-hover:scale-110 transition-transform" />
           )}
           <span className="underline-offset-4 group-hover:underline">{email}</span>
-          <span className="text-[10px] text-zinc-500 font-mono hidden sm:inline">(Click to copy)</span>
         </button>
 
         {/* Spring Toast Pop-In */}
@@ -1158,10 +1144,10 @@ const AppContent = () => {
                     {/* 7. CONTACT (BALANCED BUTTONS, RESPONSIVE ROW, MAGNETIC CTAs) */}
                     <section
                       id="contact"
-                      className="py-24 md:py-32 px-6 max-w-7xl mx-auto scroll-mt-28 md:scroll-mt-32 border-t border-white/10"
+                      className="py-24 md:py-36 px-6 max-w-7xl mx-auto scroll-mt-36 md:scroll-mt-44 border-t border-white/10"
                       aria-labelledby="contact-heading"
                     >
-                      <div className="border border-white/10 bg-gradient-to-b from-[#0e1014] to-[#070708] p-8 sm:p-14 md:p-20 rounded-2xl relative overflow-hidden text-center flex flex-col items-center shadow-2xl">
+                      <div className="border border-white/10 bg-gradient-to-b from-[#0e1014] to-[#070708] pt-14 pb-12 sm:pt-20 sm:pb-16 px-6 sm:px-14 md:px-20 rounded-2xl relative overflow-hidden text-center flex flex-col items-center shadow-2xl">
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -1172,11 +1158,15 @@ const AppContent = () => {
                           ■ 07 / INITIATE A CONVERSATION
                         </motion.div>
 
-                        <SplitText
-                          text="Let's build something exceptional together."
-                          as="h2"
+                        <motion.h2
+                          initial={{ opacity: 0, y: 16 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.65, delay: 0.1, ease: primaryEase }}
                           className="font-editorial italic text-4xl sm:text-6xl md:text-7xl text-white max-w-3xl leading-tight mb-6"
-                        />
+                        >
+                          Let's build something exceptional together.
+                        </motion.h2>
 
                         <motion.p
                           initial={{ opacity: 0, y: 12 }}
