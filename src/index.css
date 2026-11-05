@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -43,6 +43,14 @@
 
 html {
   scroll-behavior: auto; /* lenis handles smooth scroll */
+  scroll-padding-top: 6.5rem;
+}
+
+/* Accessible high-contrast focus rings */
+:focus-visible {
+  outline: 2px solid #F5A524;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar {
@@ -75,4 +83,20 @@ html {
 ::selection {
   background: rgba(245, 165, 36, 0.2);
   color: #F5A524;
+}
+
+
+/* Cinematic Portfolio Styles */
+.font-editorial {
+  font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+}
+
+.text-stroke-layer {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+  color: transparent;
+}
+
+.portrait-feather {
+  mask-image: linear-gradient(to bottom, black 0%, black 65%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 65%, transparent 100%);
 }
