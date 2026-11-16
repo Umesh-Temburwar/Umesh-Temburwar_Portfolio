@@ -13,13 +13,15 @@ export type ProjectCarouselMeta = { projectId: string };
 
 export type CertificationCarouselMeta = { certIndex: number };
 
-export function getProjectCarouselItems(): (CarouselItem & ProjectCarouselMeta)[] {
-  return portfolioData.projects.map((project) => ({
+export function getProjectCarouselItems(
+  projects = portfolioData.projects
+): (CarouselItem & ProjectCarouselMeta)[] {
+  return projects.map((project) => ({
     projectId: project.id,
     tag: project.status === "Completed" ? "#Featured" : `#${project.status.replace(/\s+/g, "")}`,
     titleLine1: project.title.split("–")[0]?.trim() ?? project.title,
     titleLine2: project.tech.slice(0, 3).join(" · ").toUpperCase(),
-    desc: project.shortDescription,
+    desc: project.shortDescription || project.description,
     img:
       ("coverImage" in project && project.coverImage) ||
       PROJECT_COVER_IMAGES[project.id] ||
@@ -29,8 +31,10 @@ export function getProjectCarouselItems(): (CarouselItem & ProjectCarouselMeta)[
   }));
 }
 
-export function getCertificationCarouselItems(): (CarouselItem & CertificationCarouselMeta)[] {
-  return portfolioData.certifications.map((cert, certIndex) => ({
+export function getCertificationCarouselItems(
+  certifications = portfolioData.certifications
+): (CarouselItem & CertificationCarouselMeta)[] {
+  return certifications.map((cert, certIndex) => ({
     certIndex,
     tag: cert.date ? `#${cert.date.replace(/\s+/g, "")}` : "#Certified",
     titleLine1: cert.title,
