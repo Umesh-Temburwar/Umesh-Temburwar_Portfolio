@@ -205,7 +205,7 @@ export default function GatewayFlow({
     <div 
       ref={containerRef} 
       className={`fixed inset-0 overflow-hidden pointer-events-none -z-10 ${className}`}
-      style={{ opacity, backgroundColor: "#0B0D10" }}
+      style={{ opacity, backgroundColor: "#0B0D10", transform: 'translateZ(0)', willChange: 'transform' }}
     >
       <div 
         className="absolute inset-0 pointer-events-none" 
@@ -214,6 +214,7 @@ export default function GatewayFlow({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ transform: 'translateZ(0)', willChange: 'transform' }}
       />
     </div>
   );
