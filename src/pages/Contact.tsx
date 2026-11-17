@@ -3,6 +3,8 @@ import { Send, Mail, Phone } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { Reveal } from '../components/Reveal';
 import { IconLinkedin as Linkedin, IconInstagram as Instagram } from '../components/icons/BrandIcons';
+import { submitContactMessage } from '../lib/supabase';
+import { usePortfolio } from '../context/PortfolioContext';
 
 // Custom github icon
 const Github = ({ size = 24, className = "" }) => (
@@ -13,12 +15,13 @@ const Github = ({ size = 24, className = "" }) => (
 );
 
 export default function Contact() {
+  const { data } = usePortfolio();
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('Unable to send your message. Please try again.');
 
-  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSubmitting || !formRef.current) return;
 
@@ -45,53 +48,63 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    // 1. Submit to Supabase database first
+    let dbSaved = false;
+    try {
+      const dbRes = await submitContactMessage({
+        name,
+        email,
+        subject,
+        message,
+      });
+      if (dbRes.success) {
+        dbSaved = true;
+      }
+    } catch (e) {
+      console.warn('Supabase contact submission notice:', e);
+    }
+
+    // 2. Also send via EmailJS if configured
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
     const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
     if (!serviceId || !templateId || !publicKey) {
-      if (import.meta.env.DEV) {
-        console.error("[EmailJS Diagnostics] Missing credentials:", {
-          hasServiceId: !!serviceId,
-          hasTemplateId: !!templateId,
-          hasPublicKey: !!publicKey
-        });
+      if (dbSaved) {
+        setSubmitStatus('success');
+        form.reset();
+        setIsSubmitting(false);
+        return;
       }
       setSubmitStatus('error');
       setErrorMessage(
-        import.meta.env.DEV
-          ? 'EmailJS configuration is missing. Ensure VITE_EMAILJS_* keys are in .env.local and Vite has been restarted.'
-          : 'Unable to send your message. Please try again.'
+        'Unable to send message at this moment. Please email directly at umeshtemburwar2002@gmail.com.'
       );
       setIsSubmitting(false);
       return;
     }
 
-    emailjs.sendForm(serviceId, templateId, form, {
-      publicKey: publicKey,
-    })
+    emailjs
+      .sendForm(serviceId, templateId, form, {
+        publicKey: publicKey,
+      })
       .then((response) => {
         if (import.meta.env.DEV) {
-          console.info("[EmailJS Diagnostics] Delivery success:", response.status, response.text);
+          console.info('[EmailJS Diagnostics] Delivery success:', response.status, response.text);
         }
         setSubmitStatus('success');
         form.reset();
       })
-      .catch((error: unknown) => {
-        const errObj = error as { status?: number; text?: string };
-        if (import.meta.env.DEV) {
-          console.error("[EmailJS Diagnostics] Delivery failed:", errObj?.status, errObj?.text || 'Delivery failed');
-          if (errObj?.status === 404 || errObj?.text === 'Account not found') {
-            console.error(
-              "[EmailJS Diagnostics] 'Account not found': The configured Public Key does not exist in EmailJS. Verify your Public Key under Account -> General in the EmailJS dashboard."
-            );
-          }
+      .catch((_error: unknown) => {
+        if (dbSaved) {
+          // Message was saved to database anyway
+          setSubmitStatus('success');
+          form.reset();
+          return;
         }
         setSubmitStatus('error');
         setErrorMessage(
-          import.meta.env.DEV && (errObj?.status === 404 || errObj?.text === 'Account not found')
-            ? 'EmailJS error: Account not found. Verify your Public Key in EmailJS Dashboard.'
-            : 'Unable to send your message. Please try again.'
+          'Unable to send your message. Please try again or reach out directly.'
         );
       })
       .finally(() => setIsSubmitting(false));
@@ -108,7 +121,7 @@ export default function Contact() {
           </p>
 
           <div className="flex flex-col gap-6">
-            <a href="https://github.com/Umesh-Temburwar" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
+            <a href={data.hero.githubUrl || 'https://github.com/Umesh-Temburwar'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
               <div className="w-14 h-14 border border-border flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
                 <Github size={24} />
               </div>
@@ -118,7 +131,7 @@ export default function Contact() {
               </div>
             </a>
 
-            <a href="https://www.linkedin.com/in/umesh-temburwar-673555373/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
+            <a href={data.hero.linkedinUrl || 'https://www.linkedin.com/in/umesh-temburwar'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
               <div className="w-14 h-14 border border-border flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
                 <Linkedin className="w-6 h-6" />
               </div>
@@ -138,7 +151,7 @@ export default function Contact() {
               </div>
             </a>
 
-            <a href="mailto:umeshtemburwar2002@gmail.com" className="flex items-center gap-6 group">
+            <a href={`mailto:${data.contact.email || 'umeshtemburwar2002@gmail.com'}`} className="flex items-center gap-6 group">
               <div className="w-14 h-14 border border-border flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
                 <Mail size={24} />
               </div>
@@ -148,13 +161,13 @@ export default function Contact() {
               </div>
             </a>
 
-            <a href="tel:+918856087984" className="flex items-center gap-6 group">
+            <a href={`tel:${(data.contact.phone || '+91 8856087984').replace(/\s+/g, '')}`} className="flex items-center gap-6 group">
               <div className="w-14 h-14 border border-border flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
                 <Phone size={24} />
               </div>
               <div>
                 <div className="font-bold text-lg group-hover:text-primary transition-colors">Phone</div>
-                <div className="text-textMuted font-mono text-sm">+91 8856087984</div>
+                <div className="text-textMuted font-mono text-sm">{data.contact.phone || '+91 8856087984'}</div>
               </div>
             </a>
           </div>
