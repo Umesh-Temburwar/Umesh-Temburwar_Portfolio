@@ -20,7 +20,7 @@ export default function Resume() {
       ) : (
         <div className="w-full max-w-[850px] h-full shadow-2xl relative flex-grow flex flex-col">
           <iframe
-            src={`${url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+            src={`${url.split('#')[0]}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
             className="w-full h-full border-none bg-white rounded-sm flex-grow"
             title="Resume"
           />

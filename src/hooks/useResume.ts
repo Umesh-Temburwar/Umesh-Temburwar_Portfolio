@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { portfolioData } from '../data/portfolio';
+import { useMemo } from 'react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export interface ResumeMetadata {
   url: string;
@@ -11,60 +11,29 @@ export interface ResumeMetadata {
   isFallback?: boolean;
 }
 
-const DEFAULT_RESUME: ResumeMetadata = {
-  url: portfolioData.resume.pdfUrl || '/Umesh-Temburwar-OCT.pdf',
-  downloadUrl: portfolioData.resume.pdfUrl || '/Umesh-Temburwar-OCT.pdf',
-  filename: 'Umesh-Temburwar-OCT.pdf',
-  size: null,
-  uploadedAt: null,
-  exists: true,
-  isFallback: true,
-};
-
 export function useResume() {
-  const [resume, setResume] = useState<ResumeMetadata>(DEFAULT_RESUME);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, lastSaved } = usePortfolio();
+  const pdfUrl = data.resume?.pdfUrl || '';
+  const exists = Boolean(data.resume?.exists && pdfUrl);
 
-  const fetchResume = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const res = await fetch('/api/resume', { cache: 'no-store' });
-      if (!res.ok) {
-        throw new Error(`Failed to fetch resume status: ${res.status}`);
-      }
-      const data = await res.json();
-      if (data && data.url) {
-        setResume({
-          url: data.url,
-          downloadUrl: data.downloadUrl || data.url,
-          filename: data.filename || 'resume.pdf',
-          size: typeof data.size === 'number' ? data.size : null,
-          uploadedAt: data.uploadedAt || null,
-          exists: data.exists !== false,
-          isFallback: Boolean(data.isFallback),
-        });
-      } else {
-        setResume(DEFAULT_RESUME);
-      }
-    } catch (err: unknown) {
-      // Degrade gracefully to static local resume fallback
-      setResume(DEFAULT_RESUME);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchResume();
-  }, [fetchResume]);
+  const cacheBustedUrl = useMemo(() => {
+    if (!pdfUrl) return '';
+    if (pdfUrl.startsWith('data:')) return pdfUrl;
+    const separator = pdfUrl.includes('?') ? '&' : '?';
+    const version = lastSaved ? encodeURIComponent(lastSaved) : String(Date.now());
+    return `${pdfUrl}${separator}v=${version}`;
+  }, [pdfUrl, lastSaved]);
 
   return {
-    ...resume,
+    url: cacheBustedUrl || pdfUrl,
+    downloadUrl: cacheBustedUrl || pdfUrl,
+    filename: 'Umesh_Temburwar_Resume.pdf',
+    size: null,
+    uploadedAt: lastSaved,
+    exists,
+    isFallback: false,
     isLoading,
-    error,
-    refresh: fetchResume,
+    error: null as string | null,
+    refresh: async () => undefined,
   };
 }
