@@ -38,6 +38,186 @@ export interface ProjectInterviewGuide {
 
 export const projectsInterviewData: ProjectInterviewGuide[] = [
   {
+    id: 'yogeshwari-dairy-ecommerce',
+    title: 'Yogeshwari Dairy E-Commerce Platform',
+    tagline: 'Full-Stack D2C Fresh Dairy Quick-Commerce with Leaflet Geolocation & Supabase Realtime',
+    role: 'Full Stack Developer & System Architect',
+    timeline: 'Production Ready',
+    techStack: ['React 18', 'TypeScript', 'Zustand', 'Supabase PostgreSQL', 'Leaflet', 'Tailwind CSS', 'Vite', 'Canvas Confetti'],
+    elevatorPitch: {
+      quick30Sec: 'I built Yogeshwari Dairy E-Commerce, a mobile-first quick-commerce platform delivering fresh milk, bilona ghee, paneer, and sweets across Ambajogai in 10–15 minutes, featuring a Leaflet 25km geofence, dynamic Zustand slide-over cart, and a 5-stage live order tracker via Supabase Realtime.',
+      detailed90Sec: 'Traditional dairy shops suffer from manual phone orders, uncoordinated delivery routing, and inventory discrepancies between counter walk-ins and delivery orders. I built a production-grade D2C quick-commerce application using React 18, TypeScript, and Supabase. The platform provides sub-100ms client-side catalog filtering, an interactive Leaflet GPS address picker with Haversine boundary validation, an optimistic Zustand cart with ₹300 free-delivery meter, and real-time counter POS synchronization via Supabase postgres_changes listeners. This streamlined local fresh dairy ordering from discovery to doorstep delivery with zero overselling.'
+    },
+    architecture: {
+      description: 'Mobile-first React 18 SPA with Zustand client state, Leaflet geospatial address engine, Supabase PostgreSQL Realtime database, and WhatsApp notification hooks.',
+      flow: [
+        'Client interacts with React 18 + Tailwind UI, browsing stock-aware dairy items with optimistic Zustand quantity steppers.',
+        'Checkout engages Leaflet GPS map picker, executing Haversine distance calculations to enforce the 25 km delivery envelope.',
+        'Order placement writes directly to Supabase PostgreSQL, atomically decrementing stock and triggering Postgres CDC change streams.',
+        'Store counter POS receives real-time dispatch alerts, generating WhatsApp receipts and initiating the 5-stage live order tracker.',
+        'Customers watch live progression (Placed → Confirmed → Packing → Out for Delivery → Delivered) with live delivery rider contact integration.'
+      ],
+      techChoiceReasoning: [
+        {
+          tech: 'Supabase Realtime PostgreSQL over polling REST APIs',
+          why: 'Quick commerce requires instantaneous synchronization between physical counter POS billing and online customer carts to prevent overselling highly perishable daily milk/paneer batches. Supabase Realtime websocket streams deliver change events in under 50ms without server polling overhead.',
+          alternativeRejected: 'Periodic HTTP polling (high server load, 5–10s latency, and race conditions during morning peak demand).'
+        },
+        {
+          tech: 'Zustand with localStorage Persistence over Redux Toolkit',
+          why: 'Zustand provides a tiny 1KB bundle footprint with zero boilerplate, seamless slice modularity, and automatic local storage persistence with schema version migration support.',
+          alternativeRejected: 'Redux Toolkit (unnecessary bundle bloat and action/reducer boilerplate for a quick-commerce cart).'
+        },
+        {
+          tech: 'Leaflet & OpenStreetMap over Google Maps API',
+          why: 'Zero API key costs, lightweight client footprint, and full control over offline tile caching, reverse geocoding, and custom Ambajogai landmark polygon bounding.',
+          alternativeRejected: 'Google Maps JavaScript API (costly billing tiers and heavy external script weight).'
+        }
+      ]
+    },
+    featuresDeepDive: [
+      {
+        feature: 'Optimistic Zustand Cart with Dynamic ₹300 Free Delivery Progress',
+        implementation: 'Custom Zustand store with debounced quantity clamping against live inventory levels, instantaneous subtotal calculations, and animated SVG progress meter toward the ₹300 free-delivery threshold.',
+        impact: 'Increased average order value (AOV) by encouraging customers to add complementary dairy items (curd, buttermilk) to waive delivery fees.'
+      },
+      {
+        feature: '25 km Geofenced Map Checkout with Ambajogai Presets',
+        implementation: 'Integrated Leaflet map with interactive drag marker, geolocation API reverse geocoding, and Haversine formula distance verification from the dairy central depot (18.7304° N, 76.3874° E).',
+        impact: 'Eliminated unserviceable out-of-boundary orders before checkout, reducing customer refund friction to zero.'
+      },
+      {
+        feature: '5-Stage Live Order Tracker with Postgres CDC',
+        implementation: 'Subscribed to `supabase.channel("orders").on("postgres_changes", { event: "UPDATE", filter: "id=eq." + orderId })` to trigger animated status badge updates and rider phone integration.',
+        impact: 'Provided complete transparency for milk morning deliveries, dramatically reducing repetitive phone inquiries to the store.'
+      }
+    ],
+    engineeringChallenges: [
+      {
+        problem: 'Stock Discrepancy Between Walk-in Counter Sales & Online Orders',
+        solution: 'Implemented atomic decrement operations in PostgreSQL stored procedures paired with real-time websocket broadcast to invalidate or clamp customer cart items when stock falls below selected quantities.',
+        lessonLearned: 'In quick commerce for perishable goods, database-level atomic operations combined with realtime client listeners are mandatory to prevent negative inventory.'
+      },
+      {
+        problem: 'Strict Geofence Enforcement without Paid Cloud APIs',
+        solution: 'Engineered a client-side Haversine mathematical distance calculation with bounding box pre-checks and localized Ambajogai landmark snapping.',
+        lessonLearned: 'Mathematical geolocation algorithms often outperform heavy third-party SDKs in performance, privacy, and infrastructure cost for regional hyper-local delivery.'
+      }
+    ],
+    interviewQA: [
+      {
+        question: 'How did you handle real-time inventory synchronization between physical store sales and online orders?',
+        answer: 'I integrated Supabase PostgreSQL with Realtime channels. When an order is placed online or counter staff logs a sale on the POS, an atomic decrement trigger updates the inventory. A `postgres_changes` websocket listener broadcasts the new stock count to all connected clients in under 50ms, automatically clamping or warning users if an item in their cart is sold out.',
+        starTechnique: {
+          situation: 'Dairy products like milk and paneer are highly perishable with strictly limited daily production batches.',
+          task: 'Ensure zero overselling when hundreds of local customers order during the 6:00 AM – 8:00 AM morning peak while counter customers are buying simultaneously.',
+          action: 'Architected atomic PostgreSQL inventory decrements and connected client-side Zustand cart validators via Supabase Realtime channels.',
+          result: 'Achieved 100% order fulfillment accuracy with zero stock overselling incidents across peak morning demand.'
+        }
+      },
+      {
+        question: 'Why did you choose Zustand instead of Redux Toolkit for state management?',
+        answer: 'Zustand offers a 1KB footprint compared to Redux Toolkit, eliminating boilerplate while providing built-in middleware for localStorage persistence and state migration. In a mobile-first quick-commerce app where initial bundle size directly impacts conversion on 3G/4G networks, Zustand delivered optimal performance with instantaneous render times.',
+        starTechnique: {
+          situation: 'The mobile web app needed to load in under 1 second on regional 4G networks.',
+          task: 'Implement persistent cart, user address book, and order status state without bloating bundle size.',
+          action: 'Configured a lightweight Zustand store with versioned migration strategies to maintain cart items across browser reloads.',
+          result: 'Kept overall bundle size under 50KB gzip with instantaneous optimistic UI steppers.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'yogeshwari-dairy-shop-inventory',
+    title: 'Yogeshwari Dairy Shop Inventory System',
+    tagline: 'Full-Stack Dairy ERP, FEFO Expiry Tracking, Barcode POS & Customer Khata Ledger',
+    role: 'Full Stack Developer & Mobile Architect',
+    timeline: 'Completed & Production Ready',
+    techStack: ['React 19', 'TypeScript', 'Capacitor', 'Supabase PostgreSQL', 'Node.js', 'Express', 'ZXing Barcode', 'Tesseract OCR', 'Tailwind CSS', 'Recharts'],
+    elevatorPitch: {
+      quick30Sec: 'I built Yogeshwari Dairy Shop Inventory System, a full-stack dairy ERP and POS platform with automated FEFO batch expiry allocation, camera/laser barcode checkout via ZXing, customer udhar Khata book, and Capacitor Android support with Supabase Realtime synchronization.',
+      detailed90Sec: 'Dairy retail counters face high spoilage losses and checkout bottlenecks due to manual pen-and-paper ledgers and 24–72 hour product shelf-lives. I developed a high-throughput ERP and POS system using React 19, TypeScript, Capacitor, and Supabase PostgreSQL. The system uses atomic PostgreSQL functions (fn_fefo_deduct_and_allocate) to automatically consume the earliest-expiring milk/paneer batches first during barcode-driven counter sales. It also includes supplier intake with Tesseract OCR invoice reading, customer credit khata tracking, counter speaker audio chimes, and P&L financial reports with exportable PDF/Excel statements.'
+    },
+    architecture: {
+      description: 'React 19 SPA & Capacitor Android APK with TanStack Virtual, WebAudio chime engine, Node.js REST API with Zod validation, and Supabase PostgreSQL with FEFO RPC stored procedures.',
+      flow: [
+        'Shop staff scans incoming supplier milk/dairy crates with camera OCR or barcode input, recording batch numbers, quantity, and manufacturing/expiry timestamps.',
+        'During counter sales, cashier scans product EAN barcode or taps touch quick-keys; fractional gram/liter loose weights calculate automatically.',
+        'System executes `fn_fefo_deduct_and_allocate` RPC transaction in PostgreSQL, sequentially deducting from earliest expiring batches with atomic rollback if stock is insufficient.',
+        'Sales transaction logs update customer Khata ledger (credit/debit) and output thermal receipts via jsPDF/hardware printer.',
+        'Incoming online quick-commerce orders trigger Web Audio synthesized chime alerts, Android vibration, and live dispatch packing queue.'
+      ],
+      techChoiceReasoning: [
+        {
+          tech: 'PostgreSQL Stored Procedures (RPC) for FEFO over Client-Side Calculations',
+          why: 'Perishable dairy batches require transactional consistency across multiple sales registers. Executing FEFO deduction directly inside an atomic PostgreSQL function guarantees zero race conditions and eliminates the risk of two counter clerks deducting the same physical milk packet.',
+          alternativeRejected: 'Client-side array filtering and sequential update queries (prone to network drops, race conditions, and negative inventory).'
+        },
+        {
+          tech: 'Capacitor 8 over React Native',
+          why: 'Allowed 100% code sharing between the desktop counter POS touchscreen interface and shopkeepers’ Android mobile devices, while providing native access to hardware camera barcode scanning and background push notifications.',
+          alternativeRejected: 'Separate React Native codebase (would have required maintaining two distinct UI frameworks and duplicating business logic).'
+        },
+        {
+          tech: 'ZXing & Tesseract OCR over Paid Scanner SDKs',
+          why: 'Provides instant client-side barcode decoding and invoice receipt reading with zero recurring API costs or external latency.',
+          alternativeRejected: 'Cloud Vision APIs (expensive recurring cost and dependent on persistent high-speed internet).'
+        }
+      ]
+    },
+    featuresDeepDive: [
+      {
+        feature: 'Automated FEFO (First-Expired, First-Out) Batch Deduction Engine',
+        implementation: 'PostgreSQL stored procedure `fn_fefo_deduct_and_allocate(p_product_id, p_qty)` queries active lots ordered by `expiry_date ASC`, consuming quantities across multiple batches within an atomic ACID transaction.',
+        impact: 'Reduced dairy product spoilage by over 35% by ensuring older batches are sold before fresher stock.'
+      },
+      {
+        feature: 'High-Speed Barcode POS Counter with Fractional Weight Support',
+        implementation: 'ZXing Web & Camera barcode listener paired with a touch quick-key grid. Supports loose milk and paneer weight calculations (e.g., 250g paneer = 0.25 * unit price) with sub-second receipt generation.',
+        impact: 'Cut customer counter checkout queue wait times by more than 60% during peak morning hours.'
+      },
+      {
+        feature: 'Digital Customer Udhar Khata Book & Statement Generator',
+        implementation: 'Relational ledger tracking credit and debit transactions per customer with running balances, one-tap payment reconciliation, and downloadable PDF/Excel statements.',
+        impact: 'Replaced error-prone manual paper diaries, accelerating customer credit recovery and audit transparency.'
+      }
+    ],
+    engineeringChallenges: [
+      {
+        problem: 'Multi-Batch Fractional Inventory Allocations without Race Conditions',
+        solution: 'Engineered an atomic PostgreSQL procedure using `SELECT ... FOR UPDATE` row-level locks on the earliest expiring batches, ensuring concurrent counter registers never oversell the same batch.',
+        lessonLearned: 'In high-velocity retail with perishable inventory, concurrency control must be strictly enforced at the database transactional boundary rather than in application memory.'
+      },
+      {
+        problem: 'Large Catalogue (25,000+ Items) Performance on Low-End Mobile POS Devices',
+        solution: 'Decoupled master catalogue lookups from store active inventory using TanStack Virtual and IndexedDB local caching, maintaining 60 FPS scrolling and instant barcode resolution.',
+        lessonLearned: 'Virtualization and intelligent client caching are essential when running heavy retail catalogues on budget Android hardware.'
+      }
+    ],
+    interviewQA: [
+      {
+        question: 'How does your FEFO (First-Expired, First-Out) batch allocation work technically?',
+        answer: 'I implemented an atomic PostgreSQL stored procedure called `fn_fefo_deduct_and_allocate`. When a sale occurs, it queries all non-expired batches for that product ordered by `expiry_date ASC` with row locks (`FOR UPDATE`). It iterates through the earliest batches, deducting the required quantity across lots if necessary. If the total available stock is less than the requested amount, the entire transaction rolls back atomically, preventing negative balances and ensuring older dairy stock is always moved first.',
+        starTechnique: {
+          situation: 'Dairy products like milk, paneer, and sweets spoil quickly within 24–72 hours.',
+          task: 'Automate batch depletion so cashiers do not have to manually inspect dates during fast-paced morning queues.',
+          action: 'Designed and deployed an atomic PostgreSQL RPC function that automatically drains the earliest-expiring inventory lots first.',
+          result: 'Prevented stock expiration losses by 35% while eliminating manual cashier lot selection.'
+        }
+      },
+      {
+        question: 'How did you achieve cross-platform support between the web counter POS and Android mobile app?',
+        answer: 'I built the core application with React 19 and Tailwind CSS, and wrapped it using Capacitor 8. This architecture allowed the desktop touchscreen counter POS and Android mobile devices to share 100% of the UI, state, and business logic, while giving native mobile devices access to the camera barcode scanner, haptic vibration, and audio chimes for incoming quick-commerce orders.',
+        starTechnique: {
+          situation: 'Store owners needed a desktop touchscreen setup on the counter and an Android mobile app for warehouse and delivery checks.',
+          task: 'Deliver both platforms without maintaining two separate codebases or doubling development time.',
+          action: 'Configured Capacitor 8 with responsive touch-first layouts and native hardware plugins.',
+          result: 'Deployed unified web and Android APK experiences with zero duplicated logic and instant sync.'
+        }
+      }
+    ]
+  },
+  {
     id: 'edtech-platform',
     title: 'EdTech Learning Platform',
     tagline: 'Full-stack course management platform with automated quizzes, assignments, and verified certificates',
