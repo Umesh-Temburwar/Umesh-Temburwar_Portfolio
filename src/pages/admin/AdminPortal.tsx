@@ -27,6 +27,8 @@ import {
   CheckCircle2,
   HelpCircle,
   MessageSquare,
+  RefreshCw,
+  Trash2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { skillsNotesData } from '../../data/admin/skillsNotesData';
@@ -35,9 +37,19 @@ import { interviewRoundsData } from '../../data/admin/interviewQuestionsData';
 import { cheatSheetsData } from '../../data/admin/cheatSheetsData';
 import { handwrittenNotesData } from '../../data/admin/handwrittenNotesData';
 import { salaryAndHRPipelineData } from '../../data/admin/salaryAndHRPipelineData';
+import { PortfolioEditor } from './PortfolioEditor';
+import { FolderGit2 } from 'lucide-react';
+import {
+  fetchContactMessages,
+  updateContactMessageStatus,
+  deleteContactMessage,
+  type ContactMessage,
+} from '../../lib/supabase';
 
 type TabType =
   | 'overview'
+  | 'website-cms'
+  | 'messages'
   | 'skills'
   | 'handwritten'
   | 'projects'
@@ -52,7 +64,7 @@ export default function AdminPortal() {
   });
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [activeTab, setActiveTab] = useState<TabType>('website-cms');
 
   // Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,6 +102,60 @@ export default function AdminPortal() {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Contact Messages State from Supabase
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [messageSearch, setMessageSearch] = useState('');
+  const [selectedMessageStatus, setSelectedMessageStatus] = useState<'all' | 'unread' | 'read'>('all');
+
+  const loadMessages = async () => {
+    setIsLoadingMessages(true);
+    const res = await fetchContactMessages();
+    if (res.success) {
+      setMessages(res.messages);
+    }
+    setIsLoadingMessages(false);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadMessages();
+    }
+  }, [isAuthenticated]);
+
+  const unreadCount = useMemo(() => {
+    return messages.filter((m) => m.status === 'unread').length;
+  }, [messages]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter((msg) => {
+      const matchesStatus =
+        selectedMessageStatus === 'all' || msg.status === selectedMessageStatus;
+      const query = messageSearch.toLowerCase();
+      const matchesSearch =
+        !query ||
+        msg.name.toLowerCase().includes(query) ||
+        msg.email.toLowerCase().includes(query) ||
+        (msg.subject && msg.subject.toLowerCase().includes(query)) ||
+        msg.message.toLowerCase().includes(query);
+      return matchesStatus && matchesSearch;
+    });
+  }, [messages, selectedMessageStatus, messageSearch]);
+
+  const handleToggleMessageStatus = async (msg: ContactMessage) => {
+    const nextStatus = msg.status === 'read' ? 'unread' : 'read';
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msg.id ? { ...m, status: nextStatus } : m))
+    );
+    await updateContactMessageStatus(msg.id, nextStatus);
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!window.confirm('Delete this message permanently?')) return;
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+    await deleteContactMessage(id);
+  };
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -334,6 +400,34 @@ export default function AdminPortal() {
         {/* PRIMARY NAVIGATION TABS (ALL 7 TABS) */}
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 flex overflow-x-auto custom-scrollbar border-t border-border/40">
           <button
+            onClick={() => setActiveTab('website-cms')}
+            className={`py-3 px-4 font-mono text-xs uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'website-cms'
+                ? 'border-emerald-400 text-emerald-400 font-bold bg-emerald-400/5'
+                : 'border-transparent text-emerald-400 hover:text-emerald-300'
+            }`}
+          >
+            <FolderGit2 size={14} /> ⚡ Live Website & Resume Editor
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('messages');
+              loadMessages();
+            }}
+            className={`py-3 px-4 font-mono text-xs uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'messages'
+                ? 'border-cyan-400 text-cyan-400 font-bold bg-cyan-400/5'
+                : 'border-transparent text-cyan-400/80 hover:text-cyan-300'
+            }`}
+          >
+            <MessageSquare size={14} /> 📬 Inquiries
+            {unreadCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-cyan-400 text-background font-bold text-[10px]">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab('overview')}
             className={`py-3 px-4 font-mono text-xs uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'overview'
@@ -411,6 +505,184 @@ export default function AdminPortal() {
         {/* ========================================================== */}
         {/* TAB 1: OVERVIEW & RESUME DOSSIER */}
         {/* ========================================================== */}
+        {activeTab === 'website-cms' && (
+          <PortfolioEditor />
+        )}
+
+        {/* ========================================================== */}
+        {/* TAB: INQUIRIES & MESSAGES FROM SUPABASE */}
+        {/* ========================================================== */}
+        {activeTab === 'messages' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Top Toolbar */}
+            <div className="p-6 rounded-2xl border border-border bg-surface/50 backdrop-blur-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-xl font-bold font-mono text-textMain flex items-center gap-2">
+                    <MessageSquare size={20} className="text-cyan-400" />
+                    Recruiter & Client Inquiries
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-cyan-400/10 text-cyan-400 border border-cyan-400/30">
+                    {messages.length} total • {unreadCount} unread
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-textMuted mt-1">
+                  Real-time contact form inquiries stored in your Supabase <code className="text-primary font-bold">contact_messages</code> table.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={loadMessages}
+                  disabled={isLoadingMessages}
+                  className="px-3.5 py-2 rounded-lg border border-border bg-background hover:border-cyan-400 text-xs font-mono text-textMain flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                  title="Reload inquiries from Supabase"
+                >
+                  <RefreshCw size={14} className={isLoadingMessages ? 'animate-spin text-cyan-400' : ''} />
+                  <span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-xl border border-border bg-surface/30">
+              <div className="relative w-full sm:w-80">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-textMuted" />
+                <input
+                  type="text"
+                  value={messageSearch}
+                  onChange={(e) => setMessageSearch(e.target.value)}
+                  placeholder="Search sender, email, message..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-background border border-border rounded text-xs font-mono text-textMain focus:border-cyan-400 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <span className="text-[11px] font-mono text-textMuted uppercase">Filter:</span>
+                {(['all', 'unread', 'read'] as const).map((status) => (
+                  <button
+                    key={status}
+                    type="button"
+                    onClick={() => setSelectedMessageStatus(status)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
+                      selectedMessageStatus === status
+                        ? 'bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 font-bold'
+                        : 'border border-border text-textMuted hover:text-textMain bg-background'
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Messages List */}
+            {isLoadingMessages && messages.length === 0 ? (
+              <div className="p-12 text-center rounded-2xl border border-border bg-surface/30">
+                <RefreshCw size={24} className="animate-spin text-cyan-400 mx-auto mb-3" />
+                <p className="text-xs font-mono text-textMuted">Loading inquiries from Supabase...</p>
+              </div>
+            ) : filteredMessages.length === 0 ? (
+              <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-surface/20">
+                <MessageSquare size={32} className="text-textMuted/40 mx-auto mb-3" />
+                <h4 className="text-sm font-mono font-bold text-textMain uppercase mb-1">
+                  No Inquiries Found
+                </h4>
+                <p className="text-xs font-mono text-textMuted max-w-md mx-auto">
+                  {messageSearch || selectedMessageStatus !== 'all'
+                    ? 'No inquiries match your current filter query.'
+                    : 'When recruiters or visitors fill the Contact form on your website, submissions will appear here in real time.'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`p-6 rounded-2xl border transition-all ${
+                      msg.status === 'unread'
+                        ? 'bg-surface border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.08)]'
+                        : 'bg-surface/50 border-border/80 opacity-90'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border/60">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="font-bold text-sm text-textMain">{msg.name}</span>
+                        <a
+                          href={`mailto:${msg.email}`}
+                          className="font-mono text-xs text-primary hover:underline flex items-center gap-1"
+                        >
+                          <Mail size={12} /> {msg.email}
+                        </a>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-bold ${
+                            msg.status === 'unread'
+                              ? 'bg-cyan-400/20 text-cyan-300 border border-cyan-400/40'
+                              : 'bg-surface border border-border text-textMuted'
+                          }`}
+                        >
+                          {msg.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 font-mono text-[11px] text-textMuted">
+                        <Clock size={12} />
+                        <span>
+                          {new Date(msg.created_at).toLocaleString('en-IN', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {msg.subject && (
+                      <div className="mt-3 text-xs font-mono text-primary font-semibold">
+                        Subject: {msg.subject}
+                      </div>
+                    )}
+
+                    <div className="mt-3 p-4 rounded-xl bg-background/80 border border-border/60 text-xs text-textMain leading-relaxed whitespace-pre-wrap font-sans">
+                      {msg.message}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-border/40">
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`mailto:${msg.email}?subject=${encodeURIComponent(
+                            `Re: ${msg.subject || 'Portfolio Inquiry'}`
+                          )}&body=${encodeURIComponent(
+                            `Hi ${msg.name},\n\nThank you for reaching out through my portfolio website.\n\n`
+                          )}`}
+                          className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-background font-mono text-xs uppercase font-bold flex items-center gap-1.5 transition-colors"
+                        >
+                          <Mail size={12} /> Reply via Email
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleMessageStatus(msg)}
+                          className="px-3 py-1.5 rounded-lg border border-border hover:border-cyan-400 text-textMuted hover:text-textMain font-mono text-xs uppercase transition-colors"
+                        >
+                          Mark as {msg.status === 'unread' ? 'Read' : 'Unread'}
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        className="px-3 py-1.5 rounded-lg border border-rose-500/30 hover:bg-rose-500/10 text-rose-400 font-mono text-xs uppercase flex items-center gap-1 transition-colors"
+                        title="Delete inquiry"
+                      >
+                        <Trash2 size={13} /> Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'overview' && (
           <div className="space-y-8 animate-fadeIn">
             {/* Header Hero Banner */}
