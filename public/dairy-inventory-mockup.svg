@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d14"/>
+      <stop offset="50%" stop-color="#0e1726"/>
+      <stop offset="100%" stop-color="#040711"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#f5a524"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" stroke-width="1" stroke-opacity="0.2"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glows -->
+  <circle cx="220" cy="160" r="190" fill="#38bdf8" opacity="0.08" filter="blur(60px)"/>
+  <circle cx="980" cy="420" r="210" fill="#f5a524" opacity="0.09" filter="blur(70px)"/>
+
+  <!-- Category Badge -->
+  <rect x="80" y="70" width="370" height="36" rx="18" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="1.5"/>
+  <text x="100" y="93" fill="#38bdf8" font-family="monospace" font-size="13" font-weight="bold" letter-spacing="2">DAIRY ERP &amp; POS INVENTORY SYSTEM</text>
+
+  <!-- Title -->
+  <text x="80" y="165" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">YOGESHWARI DAIRY SHOP</text>
+  <text x="80" y="215" fill="url(#accent)" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="700">Inventory, Stock Ledger &amp; POS</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="260" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="400">
+    Precision batch-wise FEFO expiry tracking, barcode counter POS billing &amp; customer Khata ledger
+  </text>
+
+  <!-- Feature Cards Container -->
+  <g transform="translate(80, 310)">
+    <!-- Card 1 -->
+    <rect x="0" y="0" width="320" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="40" cy="40" r="18" fill="#38bdf8" fill-opacity="0.15"/>
+    <text x="40" y="46" font-size="18" text-anchor="middle" fill="#38bdf8">📦</text>
+    <text x="75" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">FEFO Expiry Engine</text>
+    <text x="25" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13">
+      <tspan x="25" dy="0">PostgreSQL atomic functions</tspan>
+      <tspan x="25" dy="20">consume earliest-expiring batch first,</tspan>
+      <tspan x="25" dy="20">preventing dairy milk spoilage</tspan>
+    </text>
+
+    <!-- Card 2 -->
+    <rect x="350" y="0" width="320" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="390" cy="40" r="18" fill="#f5a524" fill-opacity="0.15"/>
+    <text x="390" y="46" font-size="18" text-anchor="middle" fill="#f5a524">📟</text>
+    <text x="425" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Barcode POS Billing</text>
+    <text x="375" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13">
+      <tspan x="375" dy="0">ZXing camera &amp; laser barcode</tspan>
+      <tspan x="375" dy="20">scanning, loose fractional weights,</tspan>
+      <tspan x="375" dy="20">&amp; instant receipt printing</tspan>
+    </text>
+
+    <!-- Card 3 -->
+    <rect x="700" y="0" width="340" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="740" cy="40" r="18" fill="#10b981" fill-opacity="0.15"/>
+    <text x="740" y="46" font-size="18" text-anchor="middle" fill="#10b981">📱</text>
+    <text x="775" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Khata &amp; Mobile ERP</text>
+    <text x="725" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13">
+      <tspan x="725" dy="0">Digital customer credit ledger,</tspan>
+      <tspan x="725" dy="20">Capacitor Android APK, OCR invoice</tspan>
+      <tspan x="725" dy="20">intake &amp; PDF/Excel P&amp;L exports</tspan>
+    </text>
+  </g>
+
+  <!-- Bottom Tech Stack Pills -->
+  <g transform="translate(80, 520)">
+    <rect x="0" y="0" width="1040" height="56" rx="12" fill="#0b1120" stroke="#1e293b" stroke-width="1"/>
+    
+    <g transform="translate(20, 16)">
+      <rect x="0" y="0" width="85" height="26" rx="6" fill="#1e293b"/>
+      <text x="42" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">React 19</text>
+      
+      <rect x="95" y="0" width="95" height="26" rx="6" fill="#1e293b"/>
+      <text x="142" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">TypeScript</text>
+      
+      <rect x="200" y="0" width="90" height="26" rx="6" fill="#1e293b"/>
+      <text x="245" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Capacitor</text>
+      
+      <rect x="300" y="0" width="85" height="26" rx="6" fill="#1e293b"/>
+      <text x="342" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Node.js</text>
+      
+      <rect x="395" y="0" width="90" height="26" rx="6" fill="#1e293b"/>
+      <text x="440" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Supabase</text>
+      
+      <rect x="495" y="0" width="95" height="26" rx="6" fill="#1e293b"/>
+      <text x="542" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">PostgreSQL</text>
+      
+      <rect x="600" y="0" width="65" height="26" rx="6" fill="#1e293b"/>
+      <text x="632" y="17" fill="#f5a524" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">ZXing</text>
+
+      <rect x="675" y="0" width="115" height="26" rx="6" fill="#1e293b"/>
+      <text x="732" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Tesseract OCR</text>
+      
+      <rect x="800" y="0" width="185" height="26" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="1"/>
+      <text x="892" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">✓ PRODUCTION READY</text>
+    </g>
+  </g>
+</svg>
