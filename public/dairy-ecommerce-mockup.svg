@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d12"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#050810"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f5a524"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" stroke-width="1" stroke-opacity="0.2"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glows -->
+  <circle cx="200" cy="150" r="180" fill="#f5a524" opacity="0.08" filter="blur(60px)"/>
+  <circle cx="1000" cy="450" r="220" fill="#10b981" opacity="0.09" filter="blur(70px)"/>
+
+  <!-- Header Category Badge -->
+  <rect x="80" y="70" width="340" height="36" rx="18" fill="#1e293b" stroke="#f5a524" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="100" y="93" fill="#f5a524" font-family="monospace" font-size="13" font-weight="bold" letter-spacing="2">D2C QUICK-COMMERCE PLATFORM</text>
+
+  <!-- Title -->
+  <text x="80" y="165" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">YOGESHWARI DAIRY</text>
+  <text x="80" y="215" fill="url(#accent)" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="700">E-Commerce &amp; Delivery System</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="260" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="400">
+    Farm-fresh milk, bilona ghee, soft paneer &amp; sweets delivered across Ambajogai in 10–15 mins
+  </text>
+
+  <!-- Feature Cards Container -->
+  <g transform="translate(80, 310)">
+    <!-- Card 1 -->
+    <rect x="0" y="0" width="320" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="40" cy="40" r="18" fill="#f5a524" fill-opacity="0.15"/>
+    <text x="40" y="46" font-size="18" text-anchor="middle" fill="#f5a524">🥛</text>
+    <text x="75" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Stock-Aware Catalog</text>
+    <text x="25" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13" width="270">
+      <tspan x="25" dy="0">Cow/Buffalo Milk, Bilona Ghee,</tspan>
+      <tspan x="25" dy="20">Paneer, Curd with optimistic</tspan>
+      <tspan x="25" dy="20">steppers &amp; shelf-life transparency</tspan>
+    </text>
+
+    <!-- Card 2 -->
+    <rect x="350" y="0" width="320" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="390" cy="40" r="18" fill="#10b981" fill-opacity="0.15"/>
+    <text x="390" y="46" font-size="18" text-anchor="middle" fill="#10b981">📍</text>
+    <text x="425" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">25 km Geo-Fenced Map</text>
+    <text x="375" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13">
+      <tspan x="375" dy="0">Leaflet GPS reverse geocoding,</tspan>
+      <tspan x="375" dy="20">Haversine boundary validation,</tspan>
+      <tspan x="375" dy="20">and landmark address presets</tspan>
+    </text>
+
+    <!-- Card 3 -->
+    <rect x="700" y="0" width="340" height="150" rx="16" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="740" cy="40" r="18" fill="#38bdf8" fill-opacity="0.15"/>
+    <text x="740" y="46" font-size="18" text-anchor="middle" fill="#38bdf8">⚡</text>
+    <text x="775" y="44" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="16" font-weight="700">5-Stage Live Tracker</text>
+    <text x="725" y="85" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13">
+      <tspan x="725" dy="0">Realtime Supabase CDC channels,</tspan>
+      <tspan x="725" dy="20">counter POS sync, WhatsApp receipts</tspan>
+      <tspan x="725" dy="20">&amp; live rider status updates</tspan>
+    </text>
+  </g>
+
+  <!-- Bottom Tech Stack Pills -->
+  <g transform="translate(80, 520)">
+    <rect x="0" y="0" width="1040" height="56" rx="12" fill="#0b1120" stroke="#1e293b" stroke-width="1"/>
+    
+    <g transform="translate(20, 16)">
+      <rect x="0" y="0" width="85" height="26" rx="6" fill="#1e293b"/>
+      <text x="42" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">React 18</text>
+      
+      <rect x="95" y="0" width="95" height="26" rx="6" fill="#1e293b"/>
+      <text x="142" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">TypeScript</text>
+      
+      <rect x="200" y="0" width="90" height="26" rx="6" fill="#1e293b"/>
+      <text x="245" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Supabase</text>
+      
+      <rect x="300" y="0" width="95" height="26" rx="6" fill="#1e293b"/>
+      <text x="347" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">PostgreSQL</text>
+      
+      <rect x="405" y="0" width="75" height="26" rx="6" fill="#1e293b"/>
+      <text x="442" y="17" fill="#f5a524" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Zustand</text>
+      
+      <rect x="490" y="0" width="105" height="26" rx="6" fill="#1e293b"/>
+      <text x="542" y="17" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Tailwind CSS</text>
+      
+      <rect x="605" y="0" width="75" height="26" rx="6" fill="#1e293b"/>
+      <text x="642" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Leaflet</text>
+
+      <rect x="690" y="0" width="105" height="26" rx="6" fill="#1e293b"/>
+      <text x="742" y="17" fill="#f5a524" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Counter POS</text>
+      
+      <rect x="805" y="0" width="180" height="26" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="1"/>
+      <text x="895" y="17" fill="#10b981" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">✓ PRODUCTION READY</text>
+    </g>
+  </g>
+</svg>
