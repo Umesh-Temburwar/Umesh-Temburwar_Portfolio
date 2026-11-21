@@ -15,6 +15,8 @@ export default {
       fontFamily: {
         sans: ['Space Grotesk', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        serif: ['Instrument Serif', 'Playfair Display', 'Georgia', 'serif'],
+        display: ['Instrument Serif', 'Playfair Display', 'serif'],
       },
       keyframes: {
         'scroll-line': {
