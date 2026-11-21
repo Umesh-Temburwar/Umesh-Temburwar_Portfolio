@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, X, Info, CheckCircle2, Cpu, AlertTriangle, Layers, ShieldCheck } from 'lucide-react';
 import { FiGithub } from 'react-icons/fi';
-import { portfolioData, type ProjectItem } from '../data/portfolio';
+import { type ProjectItem } from '../data/portfolio';
+import { usePortfolio } from '../context/PortfolioContext';
 import { Reveal } from '../components/Reveal';
+import { TiltCard3D } from '../components/TiltCard3D';
 
 const SectionHeader = ({ num, title }: { num: string; title: string }) => (
   <div className="col-span-12 flex items-baseline gap-4 mb-8">
@@ -14,6 +16,7 @@ const SectionHeader = ({ num, title }: { num: string; title: string }) => (
 );
 
 export default function Projects() {
+  const { data: portfolioData } = usePortfolio();
   const [selectedProject, setSelectedProject] = useState<ProjectItem | typeof portfolioData.projects[0] | null>(null);
 
   // SEO Optimization for Projects and Selected Project Modal
@@ -52,112 +55,119 @@ export default function Projects() {
           <Reveal
             key={project.id}
             delay={Math.min(idx * 80, 480)}
-            className="group border border-border bg-surface overflow-hidden flex flex-col h-full hover:border-primary/50 transition-colors"
+            className="h-full"
           >
-            <div
-              className="w-full h-64 overflow-hidden relative cursor-pointer"
-              onClick={() => setSelectedProject(project)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setSelectedProject(project);
-                }
-              }}
-              aria-label={`View details for ${project.title}`}
+            <TiltCard3D
+              maxTilt={6}
+              scale={1.01}
+              className="group border border-border bg-surface overflow-hidden flex flex-col h-full hover:border-primary/50 transition-colors rounded-xl shadow-lg"
             >
-              <img
-                src={project.coverImage}
-                alt={project.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500" />
-            </div>
-
-            <div className="p-8 flex flex-col flex-grow">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                {'category' in project && project.category ? (
-                  <span className="font-mono text-[11px] text-primary/80 uppercase tracking-wider">
-                    {project.category}
-                  </span>
-                ) : (
-                  <span className="font-mono text-[11px] text-textMuted uppercase tracking-wider">
-                    Project
-                  </span>
-                )}
-                <span className="font-mono text-xs text-primary px-3 py-0.5 border border-primary/30 rounded-full shrink-0">
-                  {project.status}
-                </span>
+              <div
+                className="w-full h-64 overflow-hidden relative cursor-pointer"
+                onClick={() => setSelectedProject(project)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedProject(project);
+                  }
+                }}
+                aria-label={`View details for ${project.title}`}
+                style={{ transform: 'translateZ(20px)' }}
+              >
+                <img
+                  src={project.coverImage}
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500" />
               </div>
 
-              <div className="mb-3">
-                <h3
-                  className="text-2xl font-bold cursor-pointer hover:text-primary transition-colors tracking-tight"
-                  onClick={() => setSelectedProject(project)}
-                >
-                  {project.title}
-                </h3>
-                {'subtitle' in project && project.subtitle && (
-                  <p className="font-mono text-xs text-primary/90 mt-1 font-medium">
-                    {project.subtitle}
-                  </p>
-                )}
-              </div>
+              <div className="p-8 flex flex-col flex-grow" style={{ transform: 'translateZ(25px)' }}>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  {'category' in project && project.category ? (
+                    <span className="font-mono text-[11px] text-primary/80 uppercase tracking-wider">
+                      {project.category}
+                    </span>
+                  ) : (
+                    <span className="font-mono text-[11px] text-textMuted uppercase tracking-wider">
+                      Project
+                    </span>
+                  )}
+                  <span className="font-mono text-xs text-primary px-3 py-0.5 border border-primary/30 rounded-full shrink-0">
+                    {project.status}
+                  </span>
+                </div>
 
-              <p className="text-textMuted leading-relaxed mb-6 flex-grow">
-                {project.shortDescription}
-              </p>
-
-              <div className="flex flex-wrap gap-2 mb-8 mt-auto" aria-label="Technology Badges">
-                {project.tech.slice(0, 6).map((t) => (
-                  <span
-                    key={t}
-                    className="font-mono text-xs text-textMuted bg-background border border-border px-2 py-1"
+                <div className="mb-3">
+                  <h3
+                    className="text-2xl font-bold cursor-pointer hover:text-primary transition-colors tracking-tight"
+                    onClick={() => setSelectedProject(project)}
                   >
-                    {t}
-                  </span>
-                ))}
-                {project.tech.length > 6 && (
-                  <span className="font-mono text-xs text-textMuted bg-background border border-border px-2 py-1">
-                    +{project.tech.length - 6}
-                  </span>
-                )}
-              </div>
+                    {project.title}
+                  </h3>
+                  {'subtitle' in project && project.subtitle && (
+                    <p className="font-mono text-xs text-primary/90 mt-1 font-medium">
+                      {project.subtitle}
+                    </p>
+                  )}
+                </div>
 
-              <div className="flex flex-wrap gap-4 items-center">
-                <button
-                  onClick={() => setSelectedProject(project)}
-                  className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1 cursor-pointer"
-                  aria-label={`View detailed overview of ${project.title}`}
-                >
-                  <Info size={12} /> VIEW DETAILS
-                </button>
-                {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1"
-                    aria-label={`Open GitHub repository for ${project.title}`}
+                <p className="text-textMuted leading-relaxed mb-6 flex-grow">
+                  {project.shortDescription}
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-8 mt-auto" aria-label="Technology Badges" style={{ transform: 'translateZ(15px)' }}>
+                  {project.tech.slice(0, 6).map((t) => (
+                    <span
+                      key={t}
+                      className="font-mono text-xs text-textMuted bg-background border border-border px-2 py-1"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                  {project.tech.length > 6 && (
+                    <span className="font-mono text-xs text-textMuted bg-background border border-border px-2 py-1">
+                      +{project.tech.length - 6}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-4 items-center" style={{ transform: 'translateZ(18px)' }}>
+                  <button
+                    onClick={() => setSelectedProject(project)}
+                    className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1 cursor-pointer"
+                    aria-label={`View detailed overview of ${project.title}`}
                   >
-                    <FiGithub size={12} /> GITHUB
-                  </a>
-                )}
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1"
-                    aria-label={`Open live demo for ${project.title}`}
-                  >
-                    <ExternalLink size={12} /> LIVE DEMO
-                  </a>
-                )}
+                    <Info size={12} /> VIEW DETAILS
+                  </button>
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1"
+                      aria-label={`Open GitHub repository for ${project.title}`}
+                    >
+                      <FiGithub size={12} /> GITHUB
+                    </a>
+                  )}
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-mono text-textMain border-b border-textMain hover:border-primary hover:text-primary transition-colors pb-1 flex items-center gap-1"
+                      aria-label={`Open live demo for ${project.title}`}
+                    >
+                      <ExternalLink size={12} /> LIVE DEMO
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            </TiltCard3D>
           </Reveal>
         ))}
       </div>
@@ -176,6 +186,7 @@ export default function Projects() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
+              data-lenis-prevent
               className="w-full max-w-4xl max-h-[90vh] bg-surface border border-border overflow-y-auto flex flex-col relative shadow-2xl custom-scrollbar"
             >
               <button
