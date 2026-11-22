@@ -20,11 +20,12 @@
 @media (prefers-reduced-motion: no-preference) {
   .js-ready .reveal-initial {
     opacity: 0;
-    transform: translate3d(0, var(--reveal-y, var(--reveal-distance)), 0);
+    transform: perspective(1000px) rotateX(10deg) translate3d(0, var(--reveal-y, var(--reveal-distance)), -30px);
+    will-change: transform, opacity;
   }
   .js-ready .reveal-animate {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: perspective(1000px) rotateX(0deg) translate3d(0, 0, 0);
     transition: opacity var(--reveal-duration) var(--reveal-ease),
                 transform var(--reveal-duration) var(--reveal-ease);
   }
@@ -43,14 +44,28 @@
 
 html {
   scroll-behavior: auto; /* lenis handles smooth scroll */
-  scroll-padding-top: 6.5rem;
 }
 
-/* Accessible high-contrast focus rings */
-:focus-visible {
-  outline: 2px solid #F5A524;
-  outline-offset: 3px;
-  border-radius: 4px;
+/* 90fps / High Refresh-rate Lenis smoothness support */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 ::-webkit-scrollbar {
