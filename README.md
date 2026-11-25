@@ -119,5 +119,5 @@ This Vite project is optimized for deployment on [Vercel](https://vercel.com).
 ## Contact
 
 - **Email**: [umeshtemburwar2002@gmail.com](mailto:umeshtemburwar2002@gmail.com)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/umesh-temburwar-673555373/)
+- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/umesh-temburwar)
 - **GitHub**: [Check out my code and projects](https://github.com/Umesh-Temburwar)

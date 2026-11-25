@@ -838,7 +838,7 @@ const App = () => {
                       </div>
                     </a>
 
-                    <a href="https://www.linkedin.com/in/umesh-temburwar-673555373/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
+                    <a href="https://www.linkedin.com/in/umesh-temburwar" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group">
                       <div className="w-14 h-14 border border-border flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
                         <Linkedin className="w-6 h-6" />
                       </div>
